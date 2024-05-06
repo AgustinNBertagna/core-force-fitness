@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { TrainersModule } from './modules/trainers/trainers.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
@@ -14,20 +12,18 @@ import typeOrmConfig from './config/typeorm';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [typeOrmConfig]
+      load: [typeOrmConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService ) => configService.get('typeorm'),
-    
+      useFactory: (configService: ConfigService) =>
+        configService.get('typeorm'),
     }),
     UsersModule,
     TrainersModule,
     MembershipsModule,
     MessagesModule,
-    ChatsModule
+    ChatsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
