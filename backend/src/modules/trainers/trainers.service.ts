@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTrainerDto } from './dto/create-trainer.dto';
-import { UpdateTrainerDto } from './dto/update-trainer.dto';
+import { CreateTrainerDto } from '../../dtos/create-trainer.dto';
+import { UpdateTrainerDto } from '../../dtos/update-trainer.dto';
 
 @Injectable()
 export class TrainersService {
   create(createTrainerDto: CreateTrainerDto) {
+    console.log(createTrainerDto); //borrar
+
     return 'This action adds a new trainer';
   }
 
@@ -17,6 +19,8 @@ export class TrainersService {
   }
 
   update(id: number, updateTrainerDto: UpdateTrainerDto) {
+    console.log(updateTrainerDto); //borrar
+
     return `This action updates a #${id} trainer`;
   }
 
