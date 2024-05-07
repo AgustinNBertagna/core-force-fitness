@@ -29,10 +29,10 @@ export class User {
   profile_image: string;
 
   @Column({ type: 'varchar', nullable: true })
-  phone: number;
+  phone: string;
 
-  @Column({ nullable: false })
-  birthday: string;
+  @Column({ type: 'timestamp', nullable: false })
+  birthdate: Date;
 
   @Column({ type: 'date', nullable: false })
   signup_date: Date;
