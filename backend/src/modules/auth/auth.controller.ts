@@ -7,7 +7,7 @@ import { loginDto } from 'src/dtos/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('users/signup')
+  @Post('signup')
   async signup(@Body() user: CreateUserDto) {
     const {
       name,
@@ -34,7 +34,7 @@ export class AuthController {
     });
   }
 
-  @Post('users/login')
+  @Post('login')
   async login(@Body() credentials: loginDto) {
     const { email, password } = credentials;
 

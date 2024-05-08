@@ -30,7 +30,7 @@ export class User {
   profile_image: string;
 
   @Column({ type: 'varchar', nullable: true })
-  phonenumber: string;
+  phoneNumber: string;
 
   @Column({ type: 'timestamp', nullable: false })
   birthdate: Date;

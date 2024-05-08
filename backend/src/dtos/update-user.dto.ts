@@ -1,55 +1,48 @@
 import {
-  IsNotEmpty,
   IsEmail,
   IsString,
   Matches,
   Length,
   IsIn,
+  IsOptional,
 } from 'class-validator';
 
 export class UpdateUserDto {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   @Length(3, 80)
   @Matches(/^[A-Za-z]+$/, { message: 'Name should only contain letters' })
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail({}, { message: 'Invalid email' })
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @Length(8, 15)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/, {
-    message:
-      'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (!@#$%^&*).',
-  })
-  password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  confirmPassword: string; // falta agregar matchpassword decorator
-
+  @IsOptional()
   @IsString()
   @Matches(/^[0-9]+$/, {
     message: 'Phone number must contain only digits.',
   })
   phoneNumber: string; // falta revisar formato de numero
 
+  @IsOptional()
   @IsString()
   birthdate: string;
 
+  @IsOptional()
   @IsIn(['male', 'female', 'other'])
   @IsString() // ver si colocar los generos en  un helper
   gender: string;
 
+  @IsOptional()
   @IsString()
   height: string;
 
+  @IsOptional()
   @IsString()
   weight: string;
 
+  @IsOptional()
   @IsString()
   @Length(3, 80)
   address: string;

@@ -29,7 +29,7 @@ export class AuthService {
     newUser.name = name;
     newUser.email = email;
     newUser.password = hash;
-    if (phoneNumber) newUser.phonenumber = phoneNumber;
+    if (phoneNumber) newUser.phoneNumber = phoneNumber;
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;
     if (height) newUser.height = height;
