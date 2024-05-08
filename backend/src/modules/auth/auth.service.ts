@@ -22,7 +22,7 @@ export class AuthService {
     height,
     weight,
     address,
-  }) {
+  }): Promise<Partial<User>> {
     const user: User = await this.usersRepository.getUserByEmail(email);
 
     if (user) throw new BadRequestException('User already exists');
@@ -30,7 +30,7 @@ export class AuthService {
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
 
-    const newUser = new User();
+    const newUser: User = new User();
     newUser.name = name;
     newUser.email = email;
     newUser.password = hash;
@@ -41,7 +41,10 @@ export class AuthService {
     if (weight) newUser.weight = weight;
     if (address) newUser.address = address;
 
-    return await this.usersRepository.createUser(newUser);
+    const signedupUser: Partial<User> =
+      await this.usersRepository.createUser(newUser);
+
+    return signedupUser;
   }
 
   async login({ email, password }) {
