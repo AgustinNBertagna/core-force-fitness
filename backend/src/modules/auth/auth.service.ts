@@ -26,7 +26,7 @@ export class AuthService {
     newUser.name = name;
     newUser.email = email;
     newUser.password = password; // implementar bcrypt
-    if (phoneNumber) newUser.phone = phoneNumber; // modificar nombre de propiedad phone a phoneNumber en entidad User
+    if (phoneNumber) newUser.phonenumber = phoneNumber; // modificar nombre de propiedad phone a phoneNumber en entidad User
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;
     if (address) newUser.address = address;
@@ -58,7 +58,7 @@ export class AuthService {
     newTrainer.name = name;
     newTrainer.email = email;
     newTrainer.password = password; // implementar bcrypt
-    newTrainer.phone = phoneNumber; // colocar dicha propiedad con nullable false en entidad
+    newTrainer.phonenumber = phoneNumber; // colocar dicha propiedad con nullable false en entidad
 
     return await this.trainersRepository.createTrainer(newTrainer);
   }
