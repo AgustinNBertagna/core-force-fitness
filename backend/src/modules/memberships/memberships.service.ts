@@ -6,9 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Membership } from '../../entities/membership.entity';
 import { Repository } from 'typeorm';
-// import * as membershipsData from '../../helpers/memberships.json';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const data = require('../../helpers/memberships.json');
+import * as data from '../../helpers/memberships.json';
 
 @Injectable()
 export class MembershipsService {

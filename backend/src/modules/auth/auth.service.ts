@@ -6,11 +6,14 @@ import {
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersRepository: UserRepository) {}
+  constructor(
+    private readonly usersRepository: UserRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async signup({
     name,
@@ -23,7 +26,7 @@ export class AuthService {
     weight,
     address,
   }) {
-    const user: User = await this.usersRepository.getUserByEmail(email);
+    const user: User | null = await this.usersRepository.getUserByEmail(email);
 
     if (user) throw new BadRequestException('User already exists');
 
@@ -45,7 +48,7 @@ export class AuthService {
   }
 
   async login({ email, password }) {
-    const user: User = await this.usersRepository.getUserByEmail(email);
+    const user: User | null = await this.usersRepository.getUserByEmail(email);
 
     if (!user) throw new BadRequestException('Invalid email or password');
 
@@ -63,14 +66,8 @@ export class AuthService {
       role: user.role,
     };
 
-    const secretKey = process.env.JWT_SECRET;
-
-    const options = {
-      expiresIn: '1h',
-    };
-
     try {
-      const token = jwt.sign(payload, secretKey, options);
+      const token = this.jwtService.sign(payload);
 
       return {
         message: 'User logged in successfully',

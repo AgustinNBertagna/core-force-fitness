@@ -6,6 +6,7 @@ import { ChatsModule } from './modules/chats/chats.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './config/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -16,7 +17,12 @@ import typeOrmConfig from './config/typeorm';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
-        configService.get('typeorm'),
+        configService.get('typeorm') as TypeOrmModule,
+    }),
+    JwtModule.register({
+      global: true,
+      signOptions: { expiresIn: '1h' },
+      secret: process.env.JWT_SECRET,
     }),
     UsersModule,
     MembershipsModule,

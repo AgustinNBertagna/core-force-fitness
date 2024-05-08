@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -11,20 +15,42 @@ export class UserRepository {
   ) {}
 
   async getUsers(page: number, limit: number): Promise<Partial<User>[]> {
-    let users = await this.usersRepository.find();
+    let users = await this.usersRepository.find({
+      select: [
+        'address',
+        'birthdate',
+        'email',
+        'gender',
+        'height',
+        'id',
+        'name',
+        'phoneNumber',
+        'profile_image',
+        'role',
+        'signup_date',
+        'students',
+        'trainer',
+        'user_membership',
+        'weight',
+      ],
+    });
 
     const start = (page - 1) * limit;
     const end = start + +limit;
 
     users = users.slice(start, end);
 
-    return users.map(({ password, ...user }) => user);
+    return users;
   }
 
   async getUserById(id: string): Promise<Omit<User, 'password'>> {
     const user = await this.usersRepository.findOne({
       where: { id },
     });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
     const { password, ...userWithoutPassword } = user;
     console.log(password); //borrar
@@ -66,11 +92,8 @@ export class UserRepository {
     return userFound.id;
   }
 
-  async getUserByEmail(email: string): Promise<User> {
+  async getUserByEmail(email: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({ where: { email } });
-    if (!user) {
-      return null;
-    }
     return user;
   }
 }
