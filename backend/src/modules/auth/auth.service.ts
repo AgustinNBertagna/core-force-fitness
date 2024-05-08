@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -21,10 +22,13 @@ export class AuthService {
 
     if (user) throw new BadRequestException('User already exists');
 
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(password, saltRounds);
+
     const newUser = new User();
     newUser.name = name;
     newUser.email = email;
-    newUser.password = password; // implementar bcrypt
+    newUser.password = hash;
     if (phoneNumber) newUser.phonenumber = phoneNumber;
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;
@@ -40,8 +44,11 @@ export class AuthService {
 
     if (!user) throw new BadRequestException('Invalid email or password');
 
-    if (password !== user.password)
-      throw new BadRequestException('Invalid email or password'); // Implementar bcrypt
+    const passwordMatches = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatches) {
+      throw new BadRequestException('Invalid email or password');
+    }
 
     // Implementar JWT
 
