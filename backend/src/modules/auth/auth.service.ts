@@ -1,7 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -50,8 +55,29 @@ export class AuthService {
       throw new BadRequestException('Invalid email or password');
     }
 
-    // Implementar JWT
+    const payload = {
+      sub: user.id,
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    };
 
-    return 'User logged in successfully';
+    const secretKey = process.env.JWT_SECRET;
+
+    const options = {
+      expiresIn: '1h',
+    };
+
+    try {
+      const token = jwt.sign(payload, secretKey, options);
+
+      return {
+        message: 'User logged in successfully',
+        token,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to create JWT token');
+    }
   }
 }
