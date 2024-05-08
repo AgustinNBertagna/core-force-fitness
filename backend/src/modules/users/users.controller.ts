@@ -1,42 +1,71 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  HttpCode,
+  NotFoundException,
+  Param,
+  ParseUUIDPipe,
+  Put,
+  Query,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from '../../dtos/create-user.dto';
-import { UpdateUserDto } from '../../dtos/update-user.dto';
 
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from 'src/dtos/update-user.dto';
+import { User } from 'src/entities/user.entity';
+import { UsersService } from './users.service';
+
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userServices: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
-
+  @HttpCode(200)
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @ApiBearerAuth()
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
+  async getUsers(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 5,
+  ): Promise<Partial<User>[]> {
+    return await this.userServices.getUsers(page, limit);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @HttpCode(200)
+  @Put(':id')
+  @ApiBearerAuth()
+  async putUserById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUser: Partial<UpdateUserDto>,
+  ): Promise<string> {
+    const userId = await this.userServices.putUserById(id, updateUser);
+    if (!userId) {
+      throw new NotFoundException('User not found');
+    }
+    return userId;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
+  @HttpCode(200)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @ApiBearerAuth()
+  async deleteUsersById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<string> {
+    const userId = await this.userServices.deleteUser(id);
+    if (!userId) {
+      throw new NotFoundException('User not found');
+    }
+    return userId;
+  }
+
+  @HttpCode(200)
+  @Get(':id')
+  @ApiBearerAuth()
+  async getUserById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<Omit<User, 'password'>> {
+    return await this.userServices.getUserById(String(id));
   }
 }
