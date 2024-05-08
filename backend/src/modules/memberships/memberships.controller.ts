@@ -1,22 +1,23 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { MembershipsService } from './memberships.service';
+import { Membership } from 'src/entities/membership.entity';
 
 @Controller('memberships')
 export class MembershipsController {
   constructor(private readonly membershipsService: MembershipsService) {}
 
   @Get()
-  findAll() {
-    return this.membershipsService.findAll();
+  getMemberships(): Promise<Membership[]> {
+    return this.membershipsService.getMemberships();
+  }
+
+  @Get('seeder')
+  addMemberships(): Promise<string> {
+    return this.membershipsService.addMemberships();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.membershipsService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.membershipsService.remove(+id);
+  getMembershipById(@Param('id') id: string) {
+    return this.membershipsService.getMembershipById(id);
   }
 }
