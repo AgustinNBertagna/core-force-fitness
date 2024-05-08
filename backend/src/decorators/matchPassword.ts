@@ -1,22 +1,25 @@
 import {
-  ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
+  ValidationArguments,
+  Validate,
 } from 'class-validator';
 
 @ValidatorConstraint({ name: 'MatchPassword', async: false })
-export class MatchPassword implements ValidatorConstraintInterface {
-  validate(
-    password: string,
-    args?: ValidationArguments,
-  ): boolean | Promise<boolean> {
-    if (password !== (args.object as any)[args.constraints[0]]) return false;
-    return true;
+class MatchPasswordValidator implements ValidatorConstraintInterface {
+  validate(confirmPassword: string, args: ValidationArguments): boolean {
+    const object = args.object as any;
+
+    const password = object.password;
+
+    return confirmPassword === password;
   }
 
   defaultMessage(args: ValidationArguments): string {
-    const property = args.property;
-    const constraintName = args.constraints[0];
-    return `${property} does not match ${constraintName}`;
+    return 'Confirm password must match password';
   }
+}
+
+export function MatchPassword(): PropertyDecorator {
+  return Validate(MatchPasswordValidator);
 }

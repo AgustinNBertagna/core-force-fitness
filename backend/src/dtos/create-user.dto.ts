@@ -6,6 +6,8 @@ import {
   Length,
   IsIn,
 } from 'class-validator';
+import { MatchPassword } from 'src/decorators/matchPassword';
+import { Genre } from 'src/helpers/genres.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -29,7 +31,8 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  confirmPassword: string; // falta agregar matchpassword decorator
+  @MatchPassword()
+  confirmPassword: string;
 
   @IsString()
   @Matches(/^[0-9]+$/, {
@@ -40,8 +43,8 @@ export class CreateUserDto {
   @IsString()
   birthdate: string;
 
-  @IsIn(['male', 'female', 'other'])
-  @IsString() // ver si colocar los generos en  un helper
+  @IsIn([Genre.MALE, Genre.FEMALE, Genre.OTHER])
+  @IsString()
   gender: string;
 
   @IsString()
