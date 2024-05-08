@@ -60,6 +60,8 @@ export class User {
   @OneToMany(() => User, (user) => user.trainer)
   students: User[];
 
-  @OneToMany(() => UserMemberships, (userMembership) => userMembership.user)
+  @OneToMany(() => UserMemberships, (userMembership) => userMembership.user, {
+    nullable: true,
+  })
   user_membership: UserMemberships;
 }

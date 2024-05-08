@@ -56,4 +56,7 @@ export class CreateUserDto {
   @IsString()
   @Length(3, 80)
   address: string;
+
+  @IsString()
+  membershipName: string;
 }

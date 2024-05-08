@@ -46,6 +46,7 @@ export class UserRepository {
   async getUserById(id: string): Promise<Omit<User, 'password'>> {
     const user = await this.usersRepository.findOne({
       where: { id },
+      relations: ['user_membership'],
     });
 
     if (!user) {
