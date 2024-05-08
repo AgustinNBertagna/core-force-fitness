@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -33,10 +33,19 @@ export class AuthService {
     const saltRounds = 10;
     const hash = await bcrypt.hash(password, saltRounds);
 
+    const signupDate = new Date();
+
+    const day = String(signupDate.getDate()).padStart(2, '0');
+    const month = String(signupDate.getMonth() + 1).padStart(2, '0');
+    const year = signupDate.getFullYear();
+
+    const formattedDate = `${day}-${month}-${year}`;
+
     const newUser: User = new User();
     newUser.name = name;
     newUser.email = email;
     newUser.password = hash;
+    newUser.signup_date = formattedDate;
     if (phoneNumber) newUser.phoneNumber = phoneNumber;
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;

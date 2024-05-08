@@ -35,8 +35,8 @@ export class User {
   @Column({ type: 'timestamp', nullable: false })
   birthdate: Date;
 
-  @Column({ type: 'date', nullable: false })
-  signup_date: Date;
+  @Column({ type: 'varchar', nullable: false })
+  signup_date: string;
 
   @Column({ type: 'varchar', nullable: false })
   gender: string;
