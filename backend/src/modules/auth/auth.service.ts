@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { Trainer } from 'src/entities/trainer.entity';
+// import { Trainer } from 'src/entities/trainer.entity';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 
@@ -7,7 +7,7 @@ import { UserRepository } from '../users/users.repository';
 export class AuthService {
   constructor(
     private readonly usersRepository: UserRepository,
-    private readonly trainersRepository: TrainersRepository,
+    // private readonly trainersRepository: TrainersRepository,
   ) {}
 
   async signupUser({
@@ -49,30 +49,30 @@ export class AuthService {
     return 'User logged in successfully';
   }
 
-  async signupTrainer({ name, email, password, phoneNumber }) {
-    const trainer: Trainer =
-      await this.trainersRepository.getTrainerByEmail(email);
+  // async signupTrainer({ name, email, password, phoneNumber }) {
+  //   const trainer: Trainer =
+  //     await this.trainersRepository.getTrainerByEmail(email);
 
-    if (trainer) throw new BadRequestException('Trainer already exists');
+  //   if (trainer) throw new BadRequestException('Trainer already exists');
 
-    const newTrainer = new Trainer();
-    newTrainer.name = name;
-    newTrainer.email = email;
-    newTrainer.password = password; // implementar bcrypt
-    newTrainer.phonenumber = phoneNumber; // colocar dicha propiedad con nullable false en entidad
+  //   const newTrainer = new Trainer();
+  //   newTrainer.name = name;
+  //   newTrainer.email = email;
+  //   newTrainer.password = password; // implementar bcrypt
+  //   newTrainer.phonenumber = phoneNumber; // colocar dicha propiedad con nullable false en entidad
 
-    return await this.trainersRepository.createTrainer(newTrainer);
-  }
+  //   return await this.trainersRepository.createTrainer(newTrainer);
+  // }
 
-  async loginTrainer({ email, password }) {
-    const trainer: Trainer =
-      await this.trainersRepository.getTrainerByEmail(email);
+  // async loginTrainer({ email, password }) {
+  //   const trainer: Trainer =
+  //     await this.trainersRepository.getTrainerByEmail(email);
 
-    if (!trainer) throw new BadRequestException('Invalid email or password');
+  //   if (!trainer) throw new BadRequestException('Invalid email or password');
 
-    if (password !== trainer.password)
-      throw new BadRequestException('Invalid email or password'); // implementar bcrypt
+  //   if (password !== trainer.password)
+  //     throw new BadRequestException('Invalid email or password'); // implementar bcrypt
 
-    return 'Trainer logged in successfully';
-  }
+  //   return 'Trainer logged in successfully';
+  // }
 }

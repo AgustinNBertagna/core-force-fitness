@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './modules/users/users.module';
-import { TrainersModule } from './modules/trainers/trainers.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { ChatsModule } from './modules/chats/chats.module';
@@ -20,7 +19,6 @@ import typeOrmConfig from './config/typeorm';
         configService.get('typeorm'),
     }),
     UsersModule,
-    TrainersModule,
     MembershipsModule,
     MessagesModule,
     ChatsModule,

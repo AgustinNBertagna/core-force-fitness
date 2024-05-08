@@ -27,6 +27,7 @@ export class UserRepository {
     });
 
     const { password, ...userWithoutPassword } = user;
+    console.log(password); //borrar
 
     return userWithoutPassword;
   }
@@ -35,6 +36,7 @@ export class UserRepository {
     const newUser = await this.usersRepository.save(user);
 
     const { password, ...userWithoutPassword } = newUser;
+    console.log(password); //borrar
 
     return userWithoutPassword;
   }
