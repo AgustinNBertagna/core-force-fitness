@@ -20,8 +20,8 @@ export class Trainer {
   @Column({ type: 'varchar', nullable: true })
   profile_image: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  phone: number;
+  @Column({ type: 'varchar', nullable: false })
+  phonenumber: number;
 
   @Column({ type: 'boolean', default: 'false' })
   isAdmin: boolean;

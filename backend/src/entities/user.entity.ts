@@ -29,7 +29,7 @@ export class User {
   profile_image: string;
 
   @Column({ type: 'varchar', nullable: true })
-  phone: string;
+  phonenumber: string;
 
   @Column({ type: 'timestamp', nullable: false })
   birthdate: Date;
@@ -42,6 +42,12 @@ export class User {
 
   @Column({ type: 'text', nullable: true })
   address: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  height: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  weight: string;
 
   @ManyToOne(() => Trainer, (trainer) => trainer.users)
   @JoinColumn({ name: 'trainer_id' })
