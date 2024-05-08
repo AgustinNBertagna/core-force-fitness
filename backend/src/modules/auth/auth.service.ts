@@ -1,22 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-// import { Trainer } from 'src/entities/trainer.entity';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly usersRepository: UserRepository,
-    // private readonly trainersRepository: TrainersRepository,
-  ) {}
+  constructor(private readonly usersRepository: UserRepository) {}
 
-  async signupUser({
+  async signup({
     name,
     email,
     password,
     phoneNumber,
     birthdate,
     gender,
+    height,
+    weight,
     address,
   }) {
     const user: User = await this.usersRepository.getUserByEmail(email);
@@ -27,16 +25,17 @@ export class AuthService {
     newUser.name = name;
     newUser.email = email;
     newUser.password = password; // implementar bcrypt
-    if (phoneNumber) newUser.phonenumber = phoneNumber; // modificar nombre de propiedad phone a phoneNumber en entidad User
+    if (phoneNumber) newUser.phonenumber = phoneNumber;
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;
+    if (height) newUser.height = height;
+    if (weight) newUser.weight = weight;
     if (address) newUser.address = address;
 
-    // Falta implementar height y weight en la entidad de User
     return await this.usersRepository.createUser(newUser);
   }
 
-  async loginUser({ email, password }) {
+  async login({ email, password }) {
     const user: User = await this.usersRepository.getUserByEmail(email);
 
     if (!user) throw new BadRequestException('Invalid email or password');
@@ -48,31 +47,4 @@ export class AuthService {
 
     return 'User logged in successfully';
   }
-
-  // async signupTrainer({ name, email, password, phoneNumber }) {
-  //   const trainer: Trainer =
-  //     await this.trainersRepository.getTrainerByEmail(email);
-
-  //   if (trainer) throw new BadRequestException('Trainer already exists');
-
-  //   const newTrainer = new Trainer();
-  //   newTrainer.name = name;
-  //   newTrainer.email = email;
-  //   newTrainer.password = password; // implementar bcrypt
-  //   newTrainer.phonenumber = phoneNumber; // colocar dicha propiedad con nullable false en entidad
-
-  //   return await this.trainersRepository.createTrainer(newTrainer);
-  // }
-
-  // async loginTrainer({ email, password }) {
-  //   const trainer: Trainer =
-  //     await this.trainersRepository.getTrainerByEmail(email);
-
-  //   if (!trainer) throw new BadRequestException('Invalid email or password');
-
-  //   if (password !== trainer.password)
-  //     throw new BadRequestException('Invalid email or password'); // implementar bcrypt
-
-  //   return 'Trainer logged in successfully';
-  // }
 }
