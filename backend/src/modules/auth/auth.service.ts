@@ -26,7 +26,7 @@ export class AuthService {
     weight,
     address,
   }) {
-    const user: User = await this.usersRepository.getUserByEmail(email);
+    const user: User | null = await this.usersRepository.getUserByEmail(email);
 
     if (user) throw new BadRequestException('User already exists');
 
