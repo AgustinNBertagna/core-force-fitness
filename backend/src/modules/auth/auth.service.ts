@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { Trainer } from 'src/entities/trainer.entity';
 import { User } from 'src/entities/user.entity';
+import { UserRepository } from '../users/users.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly usersRepository: UsersRepository,
+    private readonly usersRepository: UserRepository,
     private readonly trainersRepository: TrainersRepository,
   ) {}
 
