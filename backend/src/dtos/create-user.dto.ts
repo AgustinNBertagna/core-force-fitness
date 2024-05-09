@@ -5,6 +5,7 @@ import {
   Matches,
   Length,
   IsIn,
+  IsOptional,
 } from 'class-validator';
 import { MatchPassword } from 'src/decorators/matchPassword';
 import { Genre } from 'src/helpers/genres.enum';
@@ -47,9 +48,11 @@ export class CreateUserDto {
   @IsString()
   gender: string;
 
+  @IsOptional()
   @IsString()
   height: string;
 
+  @IsOptional()
   @IsString()
   weight: string;
 

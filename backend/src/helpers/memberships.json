@@ -1,5 +1,11 @@
 [
     {
+        "name": "Free",
+        "price": 0,
+        "description": "Limited access",
+        "duration": "0"
+    },
+    {
         "name": "Bronze",
         "price": 10,
         "description": "Access to basic features. Limited customer support. No access to premium content.",
