@@ -71,6 +71,7 @@ export class AuthService {
       return {
         message: 'User logged in successfully',
         token,
+        user,
       };
     } catch (error) {
       throw new InternalServerErrorException('Failed to create JWT token');
