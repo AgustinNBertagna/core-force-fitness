@@ -26,11 +26,7 @@ export class MembershipsService {
 
   async addMemberships() {
     const memberships = data.map((membershipData) => {
-      const membership = new Membership();
-      membership.name = membershipData.name;
-      membership.price = membershipData.price;
-      membership.description = membershipData.description;
-      membership.duration = membershipData.duration;
+      const membership = this.membershipRepository.create(membershipData);
       return membership;
     });
     try {
@@ -42,12 +38,10 @@ export class MembershipsService {
   }
 
   async getMembershipById(id: string): Promise<Membership> {
-    const membership = await this.membershipRepository.findOne({
-      where: { id },
-    });
-    if (!membership) {
-      throw new NotFoundException('Membership not found');
-    }
+    const membership = await this.membershipRepository.findOneBy({ id });
+
+    if (!membership) throw new NotFoundException('Membership not found');
+
     return membership;
   }
 }
