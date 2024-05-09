@@ -26,7 +26,11 @@ export class User {
   @Column({ type: 'varchar', nullable: false })
   password: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({
+    type: 'varchar',
+    nullable: true,
+    default: 'https://cdn-icons-png.freepik.com/512/8742/8742495.png',
+  })
   profile_image: string;
 
   @Column({ type: 'varchar', nullable: true })
