@@ -15,7 +15,7 @@ class MatchPasswordValidator implements ValidatorConstraintInterface {
     return confirmPassword === password;
   }
 
-  defaultMessage(args: ValidationArguments): string {
+  defaultMessage(_args: ValidationArguments): string {
     return 'Confirm password must match password';
   }
 }

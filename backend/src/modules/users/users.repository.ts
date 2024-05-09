@@ -54,16 +54,15 @@ export class UserRepository {
     }
 
     const { password, ...userWithoutPassword } = user;
-    console.log(password); //borrar
 
     return userWithoutPassword;
   }
 
   async createUser(user: Partial<User>): Promise<Partial<User>> {
-    const newUser = await this.usersRepository.save(user);
+    const newUser = this.usersRepository.create(user);
+    await this.usersRepository.save(newUser);
 
     const { password, ...userWithoutPassword } = newUser;
-    console.log(password); //borrar
 
     return userWithoutPassword;
   }

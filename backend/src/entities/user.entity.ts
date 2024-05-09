@@ -33,7 +33,7 @@ export class User {
   phoneNumber: string;
 
   @Column({ type: 'timestamp', nullable: false })
-  birthdate: Date;
+  birthdate: string;
 
   @Column({ type: 'varchar', nullable: false })
   signup_date: string;

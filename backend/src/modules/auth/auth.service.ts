@@ -7,6 +7,8 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from 'src/dtos/create-user.dto';
+import { loginDto } from 'src/dtos/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,23 +17,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signup({
-    name,
-    email,
-    password,
-    phoneNumber,
-    birthdate,
-    gender,
-    height,
-    weight,
-    address,
-  }) {
-    const user: User | null = await this.usersRepository.getUserByEmail(email);
+  async signup(user: CreateUserDto) {
+    const foundUser: User | null = await this.usersRepository.getUserByEmail(
+      user.email,
+    );
 
-    if (user) throw new BadRequestException('User already exists');
+    if (foundUser) throw new BadRequestException('User already exists');
 
     const saltRounds = 10;
-    const hash = await bcrypt.hash(password, saltRounds);
+    const hash: string = await bcrypt.hash(user.password, saltRounds);
 
     const signupDate = new Date();
 
@@ -41,25 +35,18 @@ export class AuthService {
 
     const formattedDate = `${day}-${month}-${year}`;
 
-    const newUser: User = new User();
-    newUser.name = name;
-    newUser.email = email;
-    newUser.password = hash;
-    newUser.signup_date = formattedDate;
-    if (phoneNumber) newUser.phoneNumber = phoneNumber;
-    if (birthdate) newUser.birthdate = birthdate;
-    if (gender) newUser.gender = gender;
-    if (height) newUser.height = height;
-    if (weight) newUser.weight = weight;
-    if (address) newUser.address = address;
+    const { confirmPassword, ...restUser } = user;
 
-    const signedupUser: Partial<User> =
-      await this.usersRepository.createUser(newUser);
+    const signedupUser: Partial<User> = await this.usersRepository.createUser({
+      ...restUser,
+      password: hash,
+      signup_date: formattedDate,
+    });
 
     return signedupUser;
   }
 
-  async login({ email, password }) {
+  async login({ email, password }: loginDto) {
     const user: User | null = await this.usersRepository.getUserByEmail(email);
 
     if (!user) throw new BadRequestException('Invalid email or password');

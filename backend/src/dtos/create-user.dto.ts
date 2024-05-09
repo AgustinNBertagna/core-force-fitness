@@ -14,7 +14,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(3, 80)
-  @Matches(/^[A-Za-z]+$/, { message: 'Name should only contain letters' })
+  @Matches(/^[A-Za-z ]+$/, { message: 'Name should only contain letters' })
   name: string;
 
   @IsNotEmpty()
