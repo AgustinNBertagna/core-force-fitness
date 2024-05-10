@@ -7,12 +7,14 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { EmailsService } from '../emails/emails.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly jwtService: JwtService,
+    private readonly emailsService: EmailsService,
   ) {}
 
   async signup({
