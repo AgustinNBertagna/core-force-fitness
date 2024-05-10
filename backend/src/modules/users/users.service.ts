@@ -72,4 +72,10 @@ export class UsersService {
     await this.usersRepository.save(user);
     return user.id;
   }
+
+  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
+
+  async getUserByEmail(email: string): Promise<Partial<User | null>> {
+    return await this.userRepository.getUserByEmail(email);
+  }
 }

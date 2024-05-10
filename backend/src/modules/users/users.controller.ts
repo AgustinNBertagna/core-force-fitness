@@ -75,4 +75,11 @@ export class UsersController {
   async logicalDelete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return await this.userServices.logicalDelete(id);
   }
+
+  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
+
+  @Get('email')
+  async getUserByEmail(@Body() email: string): Promise<Partial<User | null>> {
+    return await this.userServices.getUserByEmail(email);
+  }
 }

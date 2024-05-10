@@ -98,8 +98,30 @@ export class UserRepository {
     return userWithoutPassword;
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.usersRepository.findOne({ where: { email } });
+  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
+
+  async getUserByEmail(email: string): Promise<Partial<User | null>> {
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      select: [
+        'address',
+        'birthdate',
+        'email',
+        'gender',
+        'height',
+        'id',
+        'name',
+        'phoneNumber',
+        'profile_image',
+        'role',
+        'signup_date',
+        'students',
+        'trainer',
+        'user_membership',
+        'weight',
+      ],
+    });
+
     return user;
   }
 }
