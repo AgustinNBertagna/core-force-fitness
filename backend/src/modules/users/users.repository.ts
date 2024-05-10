@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -14,8 +10,8 @@ export class UserRepository {
     @InjectRepository(User) private usersRepository: Repository<User>,
   ) {}
 
-  async getUsers(page: number, limit: number): Promise<Partial<User>[]> {
-    let users = await this.usersRepository.find({
+  async getUsers(): Promise<User[]> {
+    const users = await this.usersRepository.find({
       select: [
         'address',
         'birthdate',
@@ -35,27 +31,44 @@ export class UserRepository {
       ],
     });
 
-    const start = (page - 1) * limit;
-    const end = start + +limit;
-
-    users = users.slice(start, end);
-
     return users;
   }
 
-  async getUserById(id: string): Promise<Omit<User, 'password'>> {
-    const user = await this.usersRepository.findOne({
+  async getUserById(id: string): Promise<User | null> {
+    const user: User | null = await this.usersRepository.findOne({
       where: { id },
       relations: ['user_membership'],
+      select: [
+        'address',
+        'birthdate',
+        'email',
+        'gender',
+        'height',
+        'id',
+        'name',
+        'phoneNumber',
+        'profile_image',
+        'role',
+        'signup_date',
+        'students',
+        'trainer',
+        'user_membership',
+        'weight',
+      ],
     });
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    return user;
+  }
 
-    const { password, ...userWithoutPassword } = user;
+  async updateUserById(
+    id: string,
+    updateUser: Partial<UpdateUserDto>,
+  ): Promise<void> {
+    await this.usersRepository.update(id, updateUser);
+  }
 
-    return userWithoutPassword;
+  async deleteUserById(user: User): Promise<void> {
+    await this.usersRepository.delete(user);
   }
 
   async createUser(user: Partial<User>): Promise<Partial<User>> {
@@ -65,31 +78,6 @@ export class UserRepository {
     const { password, ...userWithoutPassword } = newUser;
 
     return userWithoutPassword;
-  }
-
-  async putUserById(
-    id: string,
-    updateUser: Partial<UpdateUserDto>,
-  ): Promise<string> {
-    const user = await this.usersRepository.findOne({ where: { id } });
-
-    if (!user) {
-      throw new BadRequestException('User not found');
-    }
-
-    await this.usersRepository.update(id, updateUser);
-    return id;
-  }
-
-  async deleteUser(id: string): Promise<string> {
-    const userFound = await this.usersRepository.findOne({ where: { id } });
-
-    if (!userFound) {
-      throw new BadRequestException('User not found');
-    }
-
-    await this.usersRepository.delete(userFound);
-    return userFound.id;
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
