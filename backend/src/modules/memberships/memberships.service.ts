@@ -55,9 +55,7 @@ export class MembershipsService {
     const memberships: Membership[] = await this.getMemberships();
 
     const userMembership: Membership | undefined = memberships.find(
-      (membership) => {
-        membershipName === membership.name;
-      },
+      (membership) => membershipName === membership.name,
     );
 
     if (!userMembership) throw new NotFoundException('Membership not found');
