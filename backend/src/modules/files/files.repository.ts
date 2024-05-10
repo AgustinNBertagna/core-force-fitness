@@ -4,10 +4,7 @@ import toStream = require('buffer-to-stream');
 
 @Injectable()
 export class FilesRepository {
-  async uploadImage(
-    userId: string,
-    file: Express.Multer.File,
-  ): Promise<UploadApiResponse> {
+  async uploadImage(file: Express.Multer.File): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
       const upload = v2.uploader.upload_stream(
         { resource_type: 'auto' },
