@@ -4,6 +4,7 @@ import { User } from 'src/entities/user.entity';
 import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
 
 @Injectable()
 export class UsersService {
@@ -75,7 +76,9 @@ export class UsersService {
 
   //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
 
-  async getUserByEmail(email: string): Promise<Partial<User | null>> {
-    return await this.userRepository.getUserByEmail(email);
+  async getUserByEmail(email: string): Promise<userWithoutPasswordDto> {
+    const user = await this.userRepository.getUserByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
   }
 }

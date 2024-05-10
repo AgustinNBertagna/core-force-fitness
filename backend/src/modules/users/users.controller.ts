@@ -19,6 +19,7 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/helpers/roles.enum';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -79,7 +80,7 @@ export class UsersController {
   //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
 
   @Get('email')
-  async getUserByEmail(@Body() email: string): Promise<Partial<User | null>> {
+  async getUserByEmail(@Body() email: string): Promise<userWithoutPasswordDto> {
     return await this.userServices.getUserByEmail(email);
   }
 }

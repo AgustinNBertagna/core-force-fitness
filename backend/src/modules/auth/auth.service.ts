@@ -10,11 +10,16 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { EmailsService } from '../emails/emails.service';
 import { MembershipsService } from '../memberships/memberships.service';
+import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UserRepository,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly emailsService: EmailsService,
     private readonly membershipsService: MembershipsService,
@@ -32,7 +37,8 @@ export class AuthService {
     address,
     membershipName,
   }) {
-    const user: User | null = await this.usersRepository.getUserByEmail(email);
+    const user: userWithoutPasswordDto | null =
+      await this.usersRepository.getUserByEmail(email);
 
     if (user) throw new BadRequestException('User already exists');
 
@@ -62,7 +68,7 @@ export class AuthService {
     const signedupUser: Partial<User | null> =
       await this.usersRepository.createUser(newUser);
 
-    const foundUser: User | null =
+    const foundUser: userWithoutPasswordDto | null =
       await this.usersRepository.getUserByEmail(email);
 
     if (!foundUser) throw new NotFoundException('User not found');
