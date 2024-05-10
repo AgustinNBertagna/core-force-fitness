@@ -59,7 +59,7 @@ export class AuthService {
     if (weight) newUser.weight = weight;
     if (address) newUser.address = address;
 
-    const signedupUser: Partial<User> =
+    const signedupUser: Partial<User | null> =
       await this.usersRepository.createUser(newUser);
 
     const foundUser: User | null =

@@ -71,11 +71,29 @@ export class UserRepository {
     await this.usersRepository.delete(user);
   }
 
-  async createUser(user: Partial<User>): Promise<Partial<User>> {
-    const newUser = this.usersRepository.create(user);
-    await this.usersRepository.save(newUser);
-
-    const { password, ...userWithoutPassword } = newUser;
+  async createUser(user: Partial<User>): Promise<Partial<User> | null> {
+    await this.usersRepository.save(user);
+    const userWithoutPassword = await this.usersRepository.findOne({
+      where: { id: user.id },
+      relations: ['user_membership'],
+      select: [
+        'address',
+        'birthdate',
+        'email',
+        'gender',
+        'height',
+        'id',
+        'name',
+        'phoneNumber',
+        'profile_image',
+        'role',
+        'signup_date',
+        'students',
+        'trainer',
+        'user_membership',
+        'weight',
+      ],
+    });
 
     return userWithoutPassword;
   }
