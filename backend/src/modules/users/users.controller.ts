@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Put,
@@ -37,35 +36,6 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  async putUserById(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateUser: Partial<UpdateUserDto>,
-  ): Promise<string> {
-    const userId = await this.userServices.putUserById(id, updateUser);
-    if (!userId) {
-      throw new NotFoundException('User not found');
-    }
-    return userId;
-  }
-
-  @HttpCode(200)
-  @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth()
-  async deleteUsersById(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<string> {
-    const userId = await this.userServices.deleteUser(id);
-    if (!userId) {
-      throw new NotFoundException('User not found');
-    }
-    return userId;
-  }
-
-  @HttpCode(200)
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
@@ -73,5 +43,26 @@ export class UsersController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<Omit<User, 'password'>> {
     return await this.userServices.getUserById(String(id));
+  }
+
+  @HttpCode(200)
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async updateUserById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUser: Partial<UpdateUserDto>,
+  ): Promise<string> {
+    return await this.userServices.updateUserById(id, updateUser);
+  }
+
+  @HttpCode(200)
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  async deleteUserById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<string> {
+    return await this.userServices.deleteUserById(id);
   }
 }
