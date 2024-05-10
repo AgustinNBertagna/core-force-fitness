@@ -81,7 +81,9 @@ export class UserRepository {
   }
 
   async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.usersRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({
+      where: { email, isActive: true },
+    });
     return user;
   }
 }
