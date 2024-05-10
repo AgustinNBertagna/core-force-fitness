@@ -31,4 +31,15 @@ export class FilesService {
 
     return 'image uploaded successfully';
   }
+
+  async updateProfileImage(userId: string, imageUrl: string) {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.userRepository.update(user.id, { profile_image: imageUrl });
+    return 'Image updated successfully';
+  }
 }

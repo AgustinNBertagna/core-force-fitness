@@ -65,4 +65,12 @@ export class UsersController {
   ): Promise<string> {
     return await this.userServices.deleteUserById(id);
   }
+
+  @HttpCode(200)
+  @Get('email')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  async getUserByEmail(@Body() email: string): Promise<User | null> {
+    return await this.userServices.getUserByEmail(email);
+  }
 }

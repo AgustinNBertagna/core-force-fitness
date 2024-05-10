@@ -36,4 +36,14 @@ export class FilesController {
   ) {
     return await this.filesService.uploadImage(userId, file);
   }
+
+  @Post('updateProfileImage/:id')
+  async updateProfileImage(
+    @Param('id') userId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const imageUrl = await this.filesService.uploadImage(userId, file);
+    const result = await this.filesService.updateProfileImage(userId, imageUrl);
+    return { message: result };
+  }
 }
