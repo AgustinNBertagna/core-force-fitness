@@ -8,7 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
-import { FilesModule } from './files/files.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
