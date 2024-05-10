@@ -57,6 +57,9 @@ export class User {
   @Column({ type: 'enum', default: Role.USER, enum: Role })
   role: Role;
 
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
   @ManyToOne(() => User, (user) => user.students)
   @JoinColumn({ name: 'trainer_id' })
   trainer: User;
