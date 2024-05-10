@@ -65,4 +65,10 @@ export class UsersController {
   ): Promise<string> {
     return await this.userServices.deleteUserById(id);
   }
+
+  @Put('logicaldelete/:id')
+  @UseGuards(AuthGuard)
+  async logicalDelete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
+    return await this.userServices.logicalDelete(id);
+  }
 }
