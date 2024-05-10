@@ -18,6 +18,6 @@ export class UserMemberships {
   @Column({ type: 'timestamp', nullable: false })
   start_date: Date;
 
-  @Column({ type: 'timestamp', nullable: false })
+  @Column({ type: 'timestamp', nullable: true })
   end_date: Date;
 }

@@ -2,12 +2,14 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { EmailsService } from '../emails/emails.service';
+import { MembershipsService } from '../memberships/memberships.service';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,7 @@ export class AuthService {
     private readonly usersRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly emailsService: EmailsService,
+    private readonly membershipsService: MembershipsService,
   ) {}
 
   async signup({
@@ -27,6 +30,7 @@ export class AuthService {
     height,
     weight,
     address,
+    membershipName,
   }) {
     const user: User | null = await this.usersRepository.getUserByEmail(email);
 
@@ -57,6 +61,16 @@ export class AuthService {
 
     const signedupUser: Partial<User> =
       await this.usersRepository.createUser(newUser);
+
+    const foundUser: User | null =
+      await this.usersRepository.getUserByEmail(email);
+
+    if (!foundUser) throw new NotFoundException('User not found');
+
+    await this.membershipsService.assignMembership(
+      foundUser?.id,
+      membershipName,
+    );
 
     return signedupUser;
   }
