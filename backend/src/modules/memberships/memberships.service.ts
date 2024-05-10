@@ -7,12 +7,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Membership } from '../../entities/membership.entity';
 import { Repository } from 'typeorm';
 import * as data from '../../helpers/memberships.json';
+import { UserRepository } from '../users/users.repository';
+import { User } from 'src/entities/user.entity';
+import { UserMemberships } from 'src/entities/userMembership.entity';
 
 @Injectable()
 export class MembershipsService {
   constructor(
     @InjectRepository(Membership)
     private membershipRepository: Repository<Membership>,
+    private readonly usersRepository: UserRepository,
+    @InjectRepository(UserMemberships)
+    private userMembershipRepository: Repository<UserMemberships>,
   ) {}
 
   async getMemberships() {
@@ -43,5 +49,40 @@ export class MembershipsService {
     if (!membership) throw new NotFoundException('Membership not found');
 
     return membership;
+  }
+
+  async assignMembership(userId: string, membershipName: string) {
+    const memberships: Membership[] = await this.getMemberships();
+
+    const userMembership: Membership | undefined = memberships.find(
+      (membership) => {
+        membershipName === membership.name;
+      },
+    );
+
+    if (!userMembership) throw new NotFoundException('Membership not found');
+
+    const user: User | null = await this.usersRepository.getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const durationNumber = Number(userMembership.duration.split(' ')[0]);
+
+    const startDate = new Date();
+
+    const endDate = new Date(startDate);
+
+    endDate.setDate(startDate.getDate() + durationNumber); // revisar
+
+    console.log('Fecha de inicio:', startDate);
+    console.log('Fecha final:', endDate);
+
+    const newUserMembership = new UserMemberships();
+    newUserMembership.membership = userMembership;
+    newUserMembership.user = user;
+    newUserMembership.start_date = startDate;
+    newUserMembership.end_date = endDate;
+
+    await this.userMembershipRepository.save(newUserMembership);
   }
 }
