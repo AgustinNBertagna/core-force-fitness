@@ -16,6 +16,9 @@ import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { User } from 'src/entities/user.entity';
 import { UsersService } from './users.service';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/helpers/roles.enum';
+import { RolesGuard } from 'src/guards/roles.guard';
 
 @ApiTags('users')
 @Controller('users')
@@ -27,7 +30,8 @@ export class UsersController {
   @ApiBearerAuth()
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
-  @UseGuards(AuthGuard)
+  @Roles(Role.ADMIN)
+  @UseGuards(AuthGuard, RolesGuard)
   async getUsers(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 5,
