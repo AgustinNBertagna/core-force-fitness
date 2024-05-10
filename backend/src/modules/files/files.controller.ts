@@ -1,9 +1,6 @@
 import {
   Controller,
-  FileTypeValidator,
-  MaxFileSizeValidator,
   Param,
-  ParseFilePipe,
   Post,
   Put,
   UploadedFile,
