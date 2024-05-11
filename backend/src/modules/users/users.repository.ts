@@ -60,6 +60,16 @@ export class UserRepository {
     return user;
   }
 
+  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
+
+  async getUserByEmail(email: string): Promise<User | null> {
+    console.log(email);
+    const user = await this.usersRepository.findOne({ where: { email } });
+
+    console.log(user);
+    return user;
+  }
+
   async updateUserById(
     id: string,
     updateUser: Partial<UpdateUserDto>,
@@ -96,12 +106,5 @@ export class UserRepository {
     });
 
     return userWithoutPassword;
-  }
-
-  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
-
-  async getUserByEmail(email: string): Promise<User | null> {
-    const user = await this.usersRepository.findOne({ where: { email } });
-    return user;
   }
 }
