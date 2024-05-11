@@ -14,8 +14,18 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async getUsers(page: number, limit: number): Promise<Partial<User>[]> {
-    const users: User[] = await this.userRepository.getUsers();
+  async getUsers(
+    page: number,
+    limit: number,
+    userType: string,
+    membership: string,
+    gender: string,
+  ): Promise<Partial<User>[]> {
+    const users: User[] = await this.userRepository.getUsers(
+      userType,
+      membership,
+      gender,
+    );
 
     const start = (page - 1) * limit;
     const end = start + +limit;

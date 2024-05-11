@@ -36,8 +36,17 @@ export class UsersController {
   async getUsers(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 5,
+    @Query('userType') userType: string = 'user',
+    @Query('membership') membership: string = 'all',
+    @Query('gender') gender: string = 'all',
   ): Promise<Partial<User>[]> {
-    return await this.userServices.getUsers(page, limit);
+    return await this.userServices.getUsers(
+      page,
+      limit,
+      userType,
+      membership,
+      gender,
+    );
   }
 
   //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
