@@ -35,6 +35,17 @@ export class UsersService {
     return user;
   }
 
+  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
+
+  async getUserByEmail(email: string): Promise<userWithoutPasswordDto> {
+    const user = await this.userRepository.getUserByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+
+    const { password, ...userWithoutPassword } = user;
+
+    return userWithoutPassword;
+  }
+
   async updateUserById(
     id: string,
     updateUser: Partial<UpdateUserDto>,
@@ -72,13 +83,5 @@ export class UsersService {
 
     await this.usersRepository.save(user);
     return user.id;
-  }
-
-  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
-
-  async getUserByEmail(email: string): Promise<userWithoutPasswordDto> {
-    const user = await this.userRepository.getUserByEmail(email);
-    if (!user) throw new NotFoundException('User not found');
-    return user;
   }
 }

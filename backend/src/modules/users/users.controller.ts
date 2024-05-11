@@ -40,6 +40,14 @@ export class UsersController {
     return await this.userServices.getUsers(page, limit);
   }
 
+  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
+
+  @Get('email')
+  async getUserByEmail(@Body() userData: any): Promise<userWithoutPasswordDto> {
+    const { email } = userData;
+    return await this.userServices.getUserByEmail(email);
+  }
+
   @HttpCode(200)
   @Get(':id')
   @UseGuards(AuthGuard)
@@ -75,12 +83,5 @@ export class UsersController {
   @UseGuards(AuthGuard)
   async logicalDelete(@Param('id', ParseUUIDPipe) id: string): Promise<string> {
     return await this.userServices.logicalDelete(id);
-  }
-
-  //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
-
-  @Get('email')
-  async getUserByEmail(@Body() email: string): Promise<userWithoutPasswordDto> {
-    return await this.userServices.getUserByEmail(email);
   }
 }
