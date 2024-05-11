@@ -6,6 +6,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  Index,
 } from 'typeorm';
 import { UserMemberships } from './userMembership.entity';
 import { Role } from 'src/helpers/roles.enum';
@@ -20,7 +21,8 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: false })
   name: string;
 
-  @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
+  @Index({ unique: true, where: `"isActive" = true` })
+  @Column({ type: 'varchar', length: 50, nullable: false })
   email: string;
 
   @Column({ type: 'varchar', nullable: false })

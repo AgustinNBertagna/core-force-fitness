@@ -77,9 +77,6 @@ export class UsersService {
     const user: User | null = await this.userRepository.getUserById(id);
     if (!user) throw new NotFoundException('User not found');
     user.isActive = false;
-    console.log(user);
-
-    console.log(user.isActive);
 
     await this.usersRepository.save(user);
     return user.id;
