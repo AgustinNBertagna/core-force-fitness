@@ -63,10 +63,10 @@ export class UserRepository {
   //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
 
   async getUserByEmail(email: string): Promise<User | null> {
-    console.log(email);
-    const user = await this.usersRepository.findOne({ where: { email } });
+    const user = await this.usersRepository.findOne({
+      where: { email, isActive: true },
+    });
 
-    console.log(user);
     return user;
   }
 
