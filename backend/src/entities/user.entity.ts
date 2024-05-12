@@ -25,6 +25,10 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: false })
   email: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  emailAuth0: string;
+
+  @Index({ nullFiltered: true, where: `"emailAuth0" IS NOT NULL` })
   @Column({ type: 'varchar', nullable: false })
   password: string;
 
