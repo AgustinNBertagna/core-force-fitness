@@ -29,7 +29,10 @@ export class FilesService {
       throw new Error('User ID not found');
     }
 
-    return 'image uploaded successfully';
+    return {
+      message: 'Image uploaded successfully',
+      imageUrl: uploadImage.secure_url,
+    };
   }
 
   async updateUserImage(userId: string, file: Express.Multer.File) {
