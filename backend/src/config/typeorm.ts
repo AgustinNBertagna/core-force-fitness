@@ -16,7 +16,7 @@ const config = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   logging: ['error'],
   synchronize: true,
-  // dropSchema: true
+  /*  dropSchema: true, */
   ssl: {
     rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
   },
