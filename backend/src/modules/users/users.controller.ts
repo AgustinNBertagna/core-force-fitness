@@ -52,8 +52,9 @@ export class UsersController {
   //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
 
   @Get('email')
-  async getUserByEmail(@Body() userData: any): Promise<userWithoutPasswordDto> {
-    const { email } = userData;
+  async getUserByEmail(
+    @Query('email') email: string,
+  ): Promise<userWithoutPasswordDto> {
     return await this.userServices.getUserByEmail(email);
   }
 
