@@ -31,10 +31,15 @@ export class MembershipsService {
   }
 
   async addMemberships() {
+    const existingMemberships = await this.membershipRepository.find();
+    if (existingMemberships.length > 0) {
+      return 'Memberships already seed';
+    }
     const memberships = data.map((membershipData) => {
       const membership = this.membershipRepository.create(membershipData);
       return membership;
     });
+
     try {
       await this.membershipRepository.save(memberships);
       return 'Memberships preloaded';

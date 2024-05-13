@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { UsersModule } from './modules/users/users.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { MessagesModule } from './modules/messages/messages.module';
@@ -9,6 +9,8 @@ import typeOrmConfig from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { FilesModule } from './modules/files/files.module';
+import { UsersService } from './modules/users/users.service';
+import { MembershipsService } from './modules/memberships/memberships.service';
 
 @Module({
   imports: [
@@ -34,4 +36,14 @@ import { FilesModule } from './modules/files/files.module';
     FilesModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(
+    private readonly membershipsService: MembershipsService,
+    private readonly usersService: UsersService,
+  ) {}
+
+  async onModuleInit() {
+    await this.membershipsService.addMemberships();
+    await this.usersService.seedRoles();
+  }
+}

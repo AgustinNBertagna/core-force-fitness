@@ -16,15 +16,15 @@ const config = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   logging: ['error'],
   synchronize: true,
-  /*  dropSchema: true, */
-  ssl: {
-    rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
-  },
-  extra: {
-    ssl: {
-      require: true,
-    },
-  },
+  // dropSchema: true,
+  // ssl: {
+  //   rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
+  // },
+  // extra: {
+  //   ssl: {
+  //     require: false, //tener cuidado tema uso local o nube
+  //   },
+  // },
 };
 export default registerAs('typeorm', () => config);
 

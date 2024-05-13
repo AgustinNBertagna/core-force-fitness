@@ -1,4 +1,3 @@
-// import { Trainer } from 'src/entities/trainer.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -10,6 +9,7 @@ import {
 } from 'typeorm';
 import { UserMemberships } from './userMembership.entity';
 import { Role } from 'src/helpers/roles.enum';
+import { Roles } from './role.entity';
 
 @Entity({
   name: 'users',
@@ -60,11 +60,15 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   weight: string;
 
-  @Column({ type: 'enum', default: Role.USER, enum: Role })
-  role: Role;
+  // @Column({ type: 'enum', default: Role.USER, enum: Role })
+  // role: Role;
 
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
+
+  @ManyToOne(() => Roles)
+  @JoinColumn({ name: 'role_id' })
+  role: Role;
 
   @ManyToOne(() => User, (user) => user.students)
   @JoinColumn({ name: 'trainer_id' })

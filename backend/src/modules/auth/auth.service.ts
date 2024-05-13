@@ -13,6 +13,7 @@ import { MembershipsService } from '../memberships/memberships.service';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Role } from 'src/helpers/roles.enum';
 
 @Injectable()
 export class AuthService {
@@ -52,12 +53,14 @@ export class AuthService {
     const year = signupDate.getFullYear();
 
     const formattedDate = `${day}-${month}-${year}`;
+    const defaultRole: Role = Role.USER;
 
     const newUser: User = new User();
     newUser.name = name;
     newUser.email = email;
     newUser.password = hash;
     newUser.signup_date = formattedDate;
+    newUser.role = defaultRole;
     if (phoneNumber) newUser.phoneNumber = phoneNumber;
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;

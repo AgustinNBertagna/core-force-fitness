@@ -5,6 +5,8 @@ import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
+import { Roles } from 'src/entities/role.entity';
+import { Role } from 'src/helpers/roles.enum';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +14,8 @@ export class UsersService {
     private readonly userRepository: UserRepository,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Roles)
+    private rolesRepository: Repository<Roles>,
   ) {}
 
   async getUsers(
@@ -90,5 +94,13 @@ export class UsersService {
 
     await this.usersRepository.save(user);
     return user.id;
+  }
+
+  async seedRoles() {
+    for (const roleName of Object.values(Role)) {
+      const role = this.rolesRepository.create({ name: roleName });
+      await this.rolesRepository.save(role);
+    }
+    return `Roles seeded successfully.`;
   }
 }
