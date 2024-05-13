@@ -5,7 +5,6 @@ import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
-import { MembershipsService } from '../memberships/memberships.service';
 
 @Injectable()
 export class UsersService {
@@ -13,7 +12,6 @@ export class UsersService {
     private readonly userRepository: UserRepository,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    private membershipsService: MembershipsService,
   ) {}
 
   async getUsers(
@@ -37,18 +35,14 @@ export class UsersService {
     return paginatedUsers;
   }
 
-  async getUserById(id: string): Promise<User & { membershipName: string }> {
+  async getUserById(id: string): Promise<User> {
     const user: User | null = await this.userRepository.getUserById(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const membership = await this.membershipsService.getMembershipById(
-      user.user_membership.membership.id,
-    );
-
-    return { ...user, membershipName: membership.name };
+    return user;
   }
 
   //REFACTORIZAR URGENTE AGUSTIN (MANEJO DE ERRORES 😡)
