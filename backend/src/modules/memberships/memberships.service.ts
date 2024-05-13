@@ -1,26 +1,86 @@
-import { Injectable } from '@nestjs/common';
-import { CreateMembershipDto } from './dto/create-membership.dto';
-import { UpdateMembershipDto } from './dto/update-membership.dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Membership } from '../../entities/membership.entity';
+import { Repository } from 'typeorm';
+import * as data from '../../helpers/memberships.json';
+import { UserRepository } from '../users/users.repository';
+import { User } from 'src/entities/user.entity';
+import { UserMemberships } from 'src/entities/userMembership.entity';
 
 @Injectable()
 export class MembershipsService {
-  create(createMembershipDto: CreateMembershipDto) {
-    return 'This action adds a new membership';
+  constructor(
+    @InjectRepository(Membership)
+    private membershipRepository: Repository<Membership>,
+    private readonly usersRepository: UserRepository,
+    @InjectRepository(UserMemberships)
+    private userMembershipRepository: Repository<UserMemberships>,
+  ) {}
+
+  async getMemberships() {
+    try {
+      const memberships = await this.membershipRepository.find();
+      return memberships;
+    } catch (err) {
+      throw new NotFoundException('Memberships not found');
+    }
   }
 
-  findAll() {
-    return `This action returns all memberships`;
+  async addMemberships() {
+    const memberships = data.map((membershipData) => {
+      const membership = this.membershipRepository.create(membershipData);
+      return membership;
+    });
+    try {
+      await this.membershipRepository.save(memberships);
+      return 'Memberships preloaded';
+    } catch (err) {
+      throw new BadRequestException('Failed to seed memberships');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} membership`;
+  async getMembershipById(id: string): Promise<Membership> {
+    const membership = await this.membershipRepository.findOneBy({ id });
+
+    if (!membership) throw new NotFoundException('Membership not found');
+
+    return membership;
   }
 
-  update(id: number, updateMembershipDto: UpdateMembershipDto) {
-    return `This action updates a #${id} membership`;
-  }
+  async assignMembership(userId: string, membershipName: string) {
+    const memberships: Membership[] = await this.getMemberships();
 
-  remove(id: number) {
-    return `This action removes a #${id} membership`;
+    const userMembership: Membership | undefined = memberships.find(
+      (membership) => membershipName === membership.name,
+    );
+
+    if (!userMembership) throw new NotFoundException('Membership not found');
+
+    const user: User | null = await this.usersRepository.getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const durationNumber = Number(userMembership.duration.split(' ')[0]);
+
+    const startDate = new Date();
+
+    const endDate = new Date(startDate);
+
+    endDate.setDate(startDate.getDate() + durationNumber); // revisar
+
+    console.log('Fecha de inicio:', startDate);
+    console.log('Fecha final:', endDate);
+
+    const newUserMembership = new UserMemberships();
+    newUserMembership.membership = userMembership;
+    newUserMembership.user = user;
+    newUserMembership.start_date = startDate;
+    newUserMembership.end_date = endDate;
+
+    await this.userMembershipRepository.save(newUserMembership);
   }
 }

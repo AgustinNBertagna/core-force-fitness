@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './modules/users/users.module';
-import { TrainersModule } from './modules/trainers/trainers.module';
 import { MembershipsModule } from './modules/memberships/memberships.module';
 import { MessagesModule } from './modules/messages/messages.module';
 import { ChatsModule } from './modules/chats/chats.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import typeOrmConfig from './config/typeorm';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './modules/auth/auth.module';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
@@ -17,13 +19,19 @@ import typeOrmConfig from './config/typeorm';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
-        configService.get('typeorm'),
+        configService.get('typeorm') as TypeOrmModule,
+    }),
+    JwtModule.register({
+      global: true,
+      signOptions: { expiresIn: '1h' },
+      secret: process.env.JWT_SECRET,
     }),
     UsersModule,
-    TrainersModule,
     MembershipsModule,
+    AuthModule,
     MessagesModule,
     ChatsModule,
+    FilesModule,
   ],
 })
 export class AppModule {}
