@@ -21,6 +21,6 @@ export class UserMemberships {
   @Column({ type: 'timestamp', nullable: true })
   end_date: Date;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default: true })
   is_active: boolean;
 }
