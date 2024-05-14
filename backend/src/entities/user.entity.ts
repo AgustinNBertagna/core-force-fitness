@@ -65,11 +65,11 @@ export class User {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Roles, (role) => role.id)
+  @ManyToOne(() => Roles, (role) => role.users)
   @JoinColumn({ name: 'role_id' })
   role: Roles;
 
-  @ManyToOne(() => User, (user) => user.students)
+  @ManyToOne(() => User, (user) => user.students, { nullable: true })
   @JoinColumn({ name: 'trainer_id' })
   trainer: User;
 

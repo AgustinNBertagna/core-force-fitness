@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Membership } from 'src/entities/membership.entity';
+import { Roles } from 'src/entities/role.entity';
 import { User } from 'src/entities/user.entity';
 import { UserMemberships } from 'src/entities/userMembership.entity';
 import { Role } from 'src/helpers/roles.enum';
@@ -11,6 +12,8 @@ import { Repository } from 'typeorm';
 export class UserRepository {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(Roles)
+    private rolesRepository: Repository<Roles>,
   ) {}
 
   async getUsers(
@@ -23,11 +26,11 @@ export class UserRepository {
     where.isActive = true;
 
     if (userType === Role.USER) {
-      where.role = await this.usersService.getRoleByName(Role.USER);
+      where.role = await this.getRoleByName(Role.USER);
     } else if (userType === Role.TRAINER) {
-      where.role = await this.usersService.getRoleByName(Role.TRAINER);
+      where.role = await this.getRoleByName(Role.TRAINER);
     } else if (userType === Role.ADMIN) {
-      where.role = await this.usersService.getRoleByName(Role.ADMIN);
+      where.role = await this.getRoleByName(Role.ADMIN);
     }
     if (gender !== 'all') where.gender = gender;
 
@@ -68,7 +71,7 @@ export class UserRepository {
   async getUserById(id: string): Promise<User | null> {
     const user: User | null = await this.usersRepository.findOne({
       where: { id, isActive: true },
-      relations: ['user_membership'],
+      relations: { user_membership: { membership: true } },
       select: [
         'address',
         'birthdate',
@@ -113,6 +116,8 @@ export class UserRepository {
   }
 
   async createUser(user: Partial<User>): Promise<Partial<User> | null> {
+    console.log(user);
+
     await this.usersRepository.save(user);
     const userWithoutPassword = await this.usersRepository.findOne({
       where: { id: user.id },
@@ -137,5 +142,16 @@ export class UserRepository {
     });
 
     return userWithoutPassword;
+  }
+  async getRoleByName(roleName: Role): Promise<Roles | undefined> {
+    console.log(roleName);
+
+    const role = await this.rolesRepository.findOne({
+      where: { name: roleName },
+    });
+    if (!role) {
+      throw new NotFoundException('Rol no encontrado');
+    }
+    return role;
   }
 }

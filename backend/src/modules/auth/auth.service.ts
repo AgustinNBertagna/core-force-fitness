@@ -66,6 +66,7 @@ export class AuthService {
     if (height) newUser.height = height;
     if (weight) newUser.weight = weight;
     if (address) newUser.address = address;
+    console.log(newUser);
 
     const signedupUser: Partial<User | null> =
       await this.usersRepository.createUser(newUser);

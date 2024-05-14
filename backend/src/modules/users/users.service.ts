@@ -98,19 +98,20 @@ export class UsersService {
 
   async seedRoles() {
     for (const roleName of Object.values(Role)) {
-      const role = this.rolesRepository.create({ name: roleName });
-      await this.rolesRepository.save(role);
+      const existingRole = await this.rolesRepository
+        .createQueryBuilder('role')
+        .where('role.name = :roleName', { roleName })
+        .getOne();
+
+      if (!existingRole) {
+        await this.rolesRepository
+          .createQueryBuilder()
+          .insert()
+          .into(Roles)
+          .values({ name: roleName })
+          .execute();
+      }
     }
     return `Roles seeded successfully.`;
-  }
-
-  async getRoleByName(roleName: Role): Promise<Roles | undefined> {
-    const role = await this.rolesRepository.findOne({
-      where: { name: roleName },
-    });
-    if (!role) {
-      throw new NotFoundException('Rol no encontrado');
-    }
-    return role;
   }
 }
