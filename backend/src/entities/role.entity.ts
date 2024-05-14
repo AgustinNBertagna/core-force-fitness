@@ -6,7 +6,7 @@ import { Role } from '../helpers/roles.enum';
   name: 'users_roles',
 })
 export class Roles {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column({ type: 'enum', enum: Role, default: Role.USER })

@@ -1,5 +1,5 @@
+import { Roles } from 'src/entities/role.entity';
 import { User } from 'src/entities/user.entity';
-import { Role } from 'src/helpers/roles.enum';
 
 //va sin class validator
 
@@ -15,7 +15,7 @@ export class userWithoutPasswordDto {
   birthdate: string;
   height: string;
   weight: string;
-  role: Role;
+  role: Roles;
   students: User[];
   signup_date: string;
   isActive: boolean;

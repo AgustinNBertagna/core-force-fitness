@@ -22,10 +22,13 @@ export class UserRepository {
 
     where.isActive = true;
 
-    if (userType === Role.USER) where.role = Role.USER;
-    if (userType === Role.TRAINER) where.role = Role.TRAINER;
-    if (userType === Role.ADMIN) where.role = Role.ADMIN;
-
+    if (userType === Role.USER) {
+      where.role = await this.usersService.getRoleByName(Role.USER);
+    } else if (userType === Role.TRAINER) {
+      where.role = await this.usersService.getRoleByName(Role.TRAINER);
+    } else if (userType === Role.ADMIN) {
+      where.role = await this.usersService.getRoleByName(Role.ADMIN);
+    }
     if (gender !== 'all') where.gender = gender;
 
     if (membership !== 'all') {

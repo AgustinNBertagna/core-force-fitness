@@ -103,4 +103,14 @@ export class UsersService {
     }
     return `Roles seeded successfully.`;
   }
+
+  async getRoleByName(roleName: Role): Promise<Roles | undefined> {
+    const role = await this.rolesRepository.findOne({
+      where: { name: roleName },
+    });
+    if (!role) {
+      throw new NotFoundException('Rol no encontrado');
+    }
+    return role;
+  }
 }

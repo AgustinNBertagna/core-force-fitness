@@ -8,7 +8,6 @@ import {
   Index,
 } from 'typeorm';
 import { UserMemberships } from './userMembership.entity';
-import { Role } from 'src/helpers/roles.enum';
 import { Roles } from './role.entity';
 
 @Entity({
@@ -66,9 +65,9 @@ export class User {
   @Column({ type: 'boolean', default: true })
   isActive: boolean;
 
-  @ManyToOne(() => Roles)
+  @ManyToOne(() => Roles, (role) => role.id)
   @JoinColumn({ name: 'role_id' })
-  role: Role;
+  role: Roles;
 
   @ManyToOne(() => User, (user) => user.students)
   @JoinColumn({ name: 'trainer_id' })

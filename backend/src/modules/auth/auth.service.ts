@@ -12,15 +12,14 @@ import { EmailsService } from '../emails/emails.service';
 import { MembershipsService } from '../memberships/memberships.service';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Role } from 'src/helpers/roles.enum';
+import { Roles } from 'src/entities/role.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UserRepository,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly emailsService: EmailsService,
     private readonly membershipsService: MembershipsService,
@@ -53,14 +52,14 @@ export class AuthService {
     const year = signupDate.getFullYear();
 
     const formattedDate = `${day}-${month}-${year}`;
-    const defaultRole: Role = Role.USER;
-
+    const newRole = new Roles();
+    newRole.name = Role.USER;
     const newUser: User = new User();
     newUser.name = name;
     newUser.email = email;
     newUser.password = hash;
     newUser.signup_date = formattedDate;
-    newUser.role = defaultRole;
+    newUser.role = newRole;
     if (phoneNumber) newUser.phoneNumber = phoneNumber;
     if (birthdate) newUser.birthdate = birthdate;
     if (gender) newUser.gender = gender;
