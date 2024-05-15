@@ -6,7 +6,7 @@ export class EmailsService {
   private transporter: nodemailer.Transporter;
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: 'hotmail',
+      service: 'outlook',
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
