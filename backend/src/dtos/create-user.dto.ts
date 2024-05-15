@@ -24,9 +24,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(8, 15)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/, {
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
     message:
-      'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (!@#$%^&*).',
+      'La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número.',
   })
   password: string;
 
