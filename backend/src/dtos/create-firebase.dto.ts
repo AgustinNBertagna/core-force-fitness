@@ -1,4 +1,11 @@
-import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import {
+  IsString,
+  MinLength,
+  MaxLength,
+  Matches,
+  IsNotEmpty,
+  IsEmail,
+} from 'class-validator';
 
 export class CreateFirebaseDto {
   @IsString()
@@ -21,4 +28,8 @@ export class CreateFirebaseDto {
     message: 'La contraseña debe contener al menos un número.',
   })
   password: string;
+
+  @IsNotEmpty()
+  @IsEmail({}, { message: 'Invalid email' })
+  email: string;
 }

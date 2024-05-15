@@ -19,6 +19,11 @@ export class FirebaseController {
     return await this.firebaseService.loginUserFirebase(email, password);
   }
 
+  @Post('google')
+  async signInWithGoogle(@Body('idToken') idToken: string) {
+    return this.firebaseService.signInWithGoogle(idToken);
+  }
+
   @Get('getData')
   async getData(): Promise<any> {
     return await this.firebaseService.getData();
