@@ -11,15 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { EmailsService } from '../emails/emails.service';
 import { MembershipsService } from '../memberships/memberships.service';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly usersRepository: UserRepository,
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly emailsService: EmailsService,
     private readonly membershipsService: MembershipsService,
@@ -77,6 +73,8 @@ export class AuthService {
       foundUser?.id,
       membershipName,
     );
+
+    await this.emailsService.sendWelcomeMail(name, email);
 
     return signedupUser;
   }
