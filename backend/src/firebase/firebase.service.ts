@@ -27,16 +27,10 @@ export class FirebaseService {
         newUser.email = createUserDto.email;
         newUser.profile_image = createUserDto.imagen;
         newUser.birthdate = 'Insertar fechas';
-        newUser.signup_date = new Date().toISOString(); // helper para formatear
+        newUser.signup_date = '2024-05-16 12:30:45';
         newUser.gender = 'Insertar genero';
+        // new Date().toISOString(); // helper para formatear
 
-        // const newUser = await this.usersRepository.create({
-        //   firebaseId,
-        //   name,
-        //   email,
-        //   imagen,
-        //   height: '0',
-        // });
         const savedUser = await this.usersRepository.save(newUser);
         return savedUser;
       }
