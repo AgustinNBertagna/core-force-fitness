@@ -1,61 +1,23 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
-import { DataSnapshot, get, push, ref, set } from 'firebase/database';
-import { firebaseAuth, firebaseDatabase } from 'src/config/firebase.config';
-import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
-
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as admin from 'firebase-admin';
 
 @Injectable()
 export class FirebaseService {
   private readonly firebaseAuth: admin.auth.Auth;
+
   constructor() {
     const firebaseApp = admin.initializeApp();
     this.firebaseAuth = firebaseApp.auth();
   }
 
-  async createUserFirebase(
-    userFirebase: CreateFirebaseDto,
-  ): Promise<CreateFirebaseDto> {
+  async signInWithGoogle(idToken: string): Promise<string> {
     try {
-      const dataRef = ref(firebaseDatabase, 'Data');
-      const newElementRef = push(dataRef, { dataRef: userFirebase });
-
-      await set(newElementRef, userFirebase);
-      return userFirebase;
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { uid } = decodedToken; // no se usa ya que el decodedtoken se checkea en la web de firebase
+      return 'Inicio de sesión exitoso con Google.';
     } catch (error) {
-      throw new BadRequestException('No se pudo crear el usuario');
+      throw new UnauthorizedException('Error al iniciar sesión con Google.');
     }
   }
-
-  async loginUserFirebase(email: string, password: string): Promise<string> {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        firebaseAuth,
-        email,
-        password,
-      );
-      return `Usuario ${userCredential.user.email} ha iniciado sesión correctamente.`;
-    } catch (error) {
-      throw new UnauthorizedException('Correo o contraseña incorrectos.');
-    }
-  }
-
-  async getData(): Promise<any> {
-    const dataRef = ref(firebaseDatabase, 'Data');
-    const snapshot: DataSnapshot = await get(dataRef);
-    console.log('data recibida exitosamente');
-    return snapshot.val();
-  }
-
-  // async signInWithGoogle(idToken: string): Promise<admin.auth.UserRecord> {
-  //   const decodedToken = await this.firebaseAuth.verifyIdToken(idToken);
-  //   const { uid } = decodedToken;
-  //   return this.firebaseAuth.getUser(uid);
-  // }
 }
