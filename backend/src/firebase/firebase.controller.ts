@@ -8,12 +8,6 @@ export class FirebaseController {
 
   @Post('google')
   async createUserWithGoogle(@Body() createUserDto: CreateFirebaseDto) {
-    try {
-      const user =
-        await this.firebaseService.createUserWithGoogle(createUserDto);
-      return { user };
-    } catch (error) {
-      throw error;
-    }
+    await this.firebaseService.createUserWithGoogle(createUserDto);
   }
 }
