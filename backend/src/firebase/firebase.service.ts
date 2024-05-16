@@ -1,36 +1,48 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
-import { DataSnapshot, get, push, ref, set } from 'firebase/database';
-import { firebaseAuth, firebaseDatabase } from 'src/config/firebase.config';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
+import { User } from 'src/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FirebaseService {
-  async createUserFirebase(userFirebase: CreateFirebaseDto): Promise<string> {
-    const dataRef = ref(firebaseDatabase, 'Data');
-    const newElementRef = push(dataRef, { dataRef: userFirebase });
-    await set(newElementRef, userFirebase);
-    return 'Usuario creado correctamente';
-  }
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-  async loginUserFirebase(email: string, password: string): Promise<string> {
+  async createUserWithGoogle(createUserDto: CreateFirebaseDto): Promise<User> {
+    const { firebaseId, name, email, imagen } = createUserDto;
+
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        firebaseAuth,
-        email,
-        password,
-      );
-      return `Usuario ${userCredential.user.email} ha iniciado sesión correctamente.`;
-    } catch (error) {
-      throw new UnauthorizedException('Correo o contraseña incorrectos.');
-    }
-  }
+      const existingUser = await this.usersRepository.findOne({
+        where: { firebaseId },
+      });
 
-  async getData(): Promise<any> {
-    const dataRef = ref(firebaseDatabase, 'Data');
-    const snapshot: DataSnapshot = await get(dataRef);
-    console.log('data recibida exitosamente');
-    return snapshot.val();
+      if (existingUser) {
+        return existingUser;
+      } else {
+        const newUser: User = new User();
+        newUser.name = createUserDto.name;
+        newUser.email = createUserDto.email;
+        newUser.profile_image = createUserDto.imagen;
+        newUser.birthdate = 'Insertar fechas';
+        newUser.signup_date = new Date().toISOString(); // helper para formatear
+        newUser.gender = 'Insertar genero';
+
+        // const newUser = await this.usersRepository.create({
+        //   firebaseId,
+        //   name,
+        //   email,
+        //   imagen,
+        //   height: '0',
+        // });
+        const savedUser = await this.usersRepository.save(newUser);
+        return savedUser;
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Error interno del servidor');
+    }
   }
 }
