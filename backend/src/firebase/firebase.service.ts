@@ -20,7 +20,7 @@ export class FirebaseService {
       const existingUser = await this.usersRepository.findOne({
         where: { firebaseId },
       });
-
+      console.log(existingUser);
       if (existingUser) {
         return existingUser;
       } else {
@@ -29,12 +29,14 @@ export class FirebaseService {
         newUser.name = createUserDto.name;
         newUser.email = createUserDto.email;
         newUser.profile_image = createUserDto.imagen;
-        newUser.birthdate = 'Insertar fechas';
-        newUser.signup_date = '2024-05-16 12:30:45';
+        newUser.birthdate = new Date().toISOString();
+        newUser.signup_date = new Date().toISOString();
         newUser.gender = 'Insertar genero';
+        newUser.password = email;
         // new Date().toISOString(); // helper para formatear
 
         const savedUser = await this.usersRepository.save(newUser);
+        console.log(savedUser);
         return savedUser;
       }
     } catch (error) {
