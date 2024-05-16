@@ -14,6 +14,8 @@ export class FirebaseService {
   async createUserWithGoogle(createUserDto: CreateFirebaseDto): Promise<User> {
     const { firebaseId, name, email, imagen } = createUserDto;
 
+    console.log(createUserDto);
+
     try {
       const existingUser = await this.usersRepository.findOne({
         where: { firebaseId },
