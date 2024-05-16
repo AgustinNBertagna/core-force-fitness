@@ -25,6 +25,7 @@ export class FirebaseService {
         return existingUser;
       } else {
         const newUser: User = new User();
+        newUser.firebaseId = createUserDto.firebaseId;
         newUser.name = createUserDto.name;
         newUser.email = createUserDto.email;
         newUser.profile_image = createUserDto.imagen;
