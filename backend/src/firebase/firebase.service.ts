@@ -1,23 +1,48 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import * as admin from 'firebase-admin';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
+import { User } from 'src/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FirebaseService {
-  private readonly firebaseAuth: admin.auth.Auth;
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+  ) {}
 
-  constructor() {
-    const firebaseApp = admin.initializeApp();
-    this.firebaseAuth = firebaseApp.auth();
-  }
+  async createUserWithGoogle(createUserDto: CreateFirebaseDto): Promise<User> {
+    const { firebaseId, name, email, imagen } = createUserDto;
 
-  async signInWithGoogle(idToken: string): Promise<string> {
     try {
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { uid } = decodedToken; // no se usa ya que el decodedtoken se checkea en la web de firebase
-      return 'Inicio de sesión exitoso con Google.';
+      const existingUser = await this.usersRepository.findOne({
+        where: { firebaseId },
+      });
+
+      if (existingUser) {
+        return existingUser;
+      } else {
+        const newUser: User = new User();
+        newUser.name = createUserDto.name;
+        newUser.email = createUserDto.email;
+        newUser.profile_image = createUserDto.imagen;
+        newUser.birthdate = 'Insertar fechas';
+        newUser.signup_date = new Date().toISOString(); // helper para formatear
+        newUser.gender = 'Insertar genero';
+
+        // const newUser = await this.usersRepository.create({
+        //   firebaseId,
+        //   name,
+        //   email,
+        //   imagen,
+        //   height: '0',
+        // });
+        const savedUser = await this.usersRepository.save(newUser);
+        return savedUser;
+      }
     } catch (error) {
-      throw new UnauthorizedException('Error al iniciar sesión con Google.');
+      console.error(error);
+      throw new Error('Error interno del servidor');
     }
   }
 }

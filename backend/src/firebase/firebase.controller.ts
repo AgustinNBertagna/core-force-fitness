@@ -1,17 +1,19 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { FirebaseService } from './firebase.service';
+import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
 
 @Controller('firebase')
 export class FirebaseController {
   constructor(private readonly firebaseService: FirebaseService) {}
 
   @Post('google')
-  async signInWithGoogle(@Body('idToken') idToken: string) {
+  async createUserWithGoogle(@Body() createUserDto: CreateFirebaseDto) {
     try {
-      const message = await this.firebaseService.signInWithGoogle(idToken);
-      return { message };
+      const user =
+        await this.firebaseService.createUserWithGoogle(createUserDto);
+      return { user };
     } catch (error) {
-      throw new BadRequestException('No se pudo registrar con google');
+      throw error;
     }
   }
 }
