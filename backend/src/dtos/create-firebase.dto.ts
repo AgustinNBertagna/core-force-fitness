@@ -8,10 +8,9 @@ import {
 } from 'class-validator';
 
 export class CreateFirebaseDto {
-  @IsString()
-  @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres.' })
-  @MaxLength(20, { message: 'El nombre no puede exceder los 20 caracteres.' })
-  name: string;
+  @IsNotEmpty()
+  @IsEmail({}, { message: 'Invalid email' })
+  email: string;
 
   @IsString()
   @MinLength(8, { message: 'La contraseña debe tener al menos 8 caracteres.' })
@@ -28,8 +27,4 @@ export class CreateFirebaseDto {
     message: 'La contraseña debe contener al menos un número.',
   })
   password: string;
-
-  @IsNotEmpty()
-  @IsEmail({}, { message: 'Invalid email' })
-  email: string;
 }

@@ -19,12 +19,15 @@ export class FirebaseService {
     this.firebaseAuth = firebaseApp.auth();
   }
 
-  async createUserFirebase(userFirebase: CreateFirebaseDto): Promise<string> {
+  async createUserFirebase(
+    userFirebase: CreateFirebaseDto,
+  ): Promise<CreateFirebaseDto> {
     try {
       const dataRef = ref(firebaseDatabase, 'Data');
       const newElementRef = push(dataRef, { dataRef: userFirebase });
+
       await set(newElementRef, userFirebase);
-      return 'Usuario creado correctamente';
+      return userFirebase;
     } catch (error) {
       throw new BadRequestException('No se pudo crear el usuario');
     }
@@ -49,9 +52,10 @@ export class FirebaseService {
     console.log('data recibida exitosamente');
     return snapshot.val();
   }
-  async signInWithGoogle(idToken: string): Promise<admin.auth.UserRecord> {
-    const decodedToken = await this.firebaseAuth.verifyIdToken(idToken);
-    const { uid } = decodedToken;
-    return this.firebaseAuth.getUser(uid);
-  }
+
+  // async signInWithGoogle(idToken: string): Promise<admin.auth.UserRecord> {
+  //   const decodedToken = await this.firebaseAuth.verifyIdToken(idToken);
+  //   const { uid } = decodedToken;
+  //   return this.firebaseAuth.getUser(uid);
+  // }
 }
