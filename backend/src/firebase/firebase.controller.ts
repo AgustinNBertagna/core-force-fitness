@@ -8,6 +8,6 @@ export class FirebaseController {
 
   @Post('google')
   async createUserWithGoogle(@Body() createUserDto: CreateFirebaseDto) {
-    await this.firebaseService.createUserWithGoogle(createUserDto);
+    return await this.firebaseService.createUserWithGoogle(createUserDto);
   }
 }
