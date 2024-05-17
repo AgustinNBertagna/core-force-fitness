@@ -1,36 +1,66 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-
-import { DataSnapshot, get, push, ref, set } from 'firebase/database';
-import { firebaseAuth, firebaseDatabase } from 'src/config/firebase.config';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
+import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
+import { User } from 'src/entities/user.entity';
+import { EmailsService } from 'src/modules/emails/emails.service';
+import { MembershipsService } from 'src/modules/memberships/memberships.service';
+import { UserRepository } from 'src/modules/users/users.repository';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class FirebaseService {
-  async createUserFirebase(userFirebase: CreateFirebaseDto): Promise<string> {
-    const dataRef = ref(firebaseDatabase, 'Data');
-    const newElementRef = push(dataRef, { dataRef: userFirebase });
-    await set(newElementRef, userFirebase);
-    return 'Usuario creado correctamente';
-  }
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
+    private readonly membershipsService: MembershipsService,
+    private readonly emailsService: EmailsService,
+  ) {}
 
-  async loginUserFirebase(email: string, password: string): Promise<string> {
+  async createUserWithGoogle(createUserDto: CreateFirebaseDto): Promise<User> {
+    const { firebaseId, name, email, imagen } = createUserDto;
+
+    console.log(createUserDto);
+
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        firebaseAuth,
-        email,
-        password,
-      );
-      return `Usuario ${userCredential.user.email} ha iniciado sesión correctamente.`;
-    } catch (error) {
-      throw new UnauthorizedException('Correo o contraseña incorrectos.');
-    }
-  }
+      const existingUser = await this.usersRepository.findOne({
+        where: { firebaseId },
+      });
+      console.log(existingUser);
+      if (existingUser) {
+        return existingUser;
+      } else {
+        const newUser: User = new User();
+        newUser.firebaseId = createUserDto.firebaseId;
+        newUser.name = createUserDto.name;
+        newUser.email = createUserDto.email;
+        newUser.profile_image = createUserDto.imagen;
+        newUser.birthdate = new Date().toISOString();
+        newUser.signup_date = new Date().toISOString();
+        newUser.gender = 'Insertar genero';
+        newUser.password = email;
 
-  async getData(): Promise<any> {
-    const dataRef = ref(firebaseDatabase, 'Data');
-    const snapshot: DataSnapshot = await get(dataRef);
-    console.log('data recibida exitosamente');
-    return snapshot.val();
+        // new Date().toISOString(); // helper para formatear
+        const membershipName = 'Free';
+        const savedUser = await this.usersRepository.save(newUser);
+        const foundUser: userWithoutPasswordDto | null =
+          await this.userRepository.getUserByEmail(email);
+
+        if (!foundUser) throw new NotFoundException('User not found');
+
+        await this.membershipsService.assignMembership(
+          foundUser?.id,
+          membershipName,
+        );
+
+        await this.emailsService.sendWelcomeMail(name, email);
+
+        return savedUser;
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Error interno del servidor');
+    }
   }
 }
