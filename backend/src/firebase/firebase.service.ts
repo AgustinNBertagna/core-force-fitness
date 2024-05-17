@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
@@ -14,11 +15,12 @@ export class FirebaseService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private readonly userRepository: UserRepository,
+    private readonly jwtService: JwtService,
     private readonly membershipsService: MembershipsService,
     private readonly emailsService: EmailsService,
   ) {}
 
-  async createUserWithGoogle(createUserDto: CreateFirebaseDto): Promise<User> {
+  async createUserWithGoogle(createUserDto: CreateFirebaseDto) {
     const { firebaseId, name, email, imagen } = createUserDto;
 
     console.log(createUserDto);
@@ -42,8 +44,8 @@ export class FirebaseService {
         newUser.password = email;
 
         // new Date().toISOString(); // helper para formatear
-        const membershipName = 'free';
-        const savedUser = await this.usersRepository.save(newUser);
+        const membershipName = 'Free';
+        await this.usersRepository.save(newUser);
         const foundUser: userWithoutPasswordDto | null =
           await this.userRepository.getUserByEmail(email);
 
@@ -54,9 +56,21 @@ export class FirebaseService {
           membershipName,
         );
 
+        const payload = {
+          sub: newUser.id,
+          userId: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          role: newUser.role,
+        };
+        const token = this.jwtService.sign(payload);
         await this.emailsService.sendWelcomeMail(name, email);
 
-        return savedUser;
+        return {
+          message: 'User logged in successfully',
+          token,
+          userId: newUser.id,
+        };
       }
     } catch (error) {
       console.error(error);
