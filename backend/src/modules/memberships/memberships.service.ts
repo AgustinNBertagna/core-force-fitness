@@ -82,5 +82,7 @@ export class MembershipsService {
     newUserMembership.end_date = endDate;
 
     await this.userMembershipRepository.save(newUserMembership);
+
+    return { startDate, endDate };
   }
 }
