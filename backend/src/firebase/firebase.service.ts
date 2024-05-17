@@ -42,7 +42,7 @@ export class FirebaseService {
         newUser.password = email;
 
         // new Date().toISOString(); // helper para formatear
-        const membershipName = 'free';
+        const membershipName = 'Free';
         const savedUser = await this.usersRepository.save(newUser);
         const foundUser: userWithoutPasswordDto | null =
           await this.userRepository.getUserByEmail(email);
