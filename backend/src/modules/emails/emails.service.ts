@@ -22,6 +22,8 @@ export class EmailsService {
       subject: 'Welcome to CoreForce Fitness',
       html: welcomeEmail,
     };
+    console.log('Email send');
+
     await this.transporter.sendMail(email);
   }
 }

@@ -14,9 +14,9 @@ const config = {
   password: process.env.DB_PASSWORD,
   entities: ['dist/**/*.entity{.ts,.js}'],
   migrations: ['dist/migrations/*{.ts,.js}'],
-  logging: ['error'],
+  logging: true,
   synchronize: true,
-  /*  dropSchema: true, */
+  // dropSchema: true,
   ssl: {
     rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
   },
