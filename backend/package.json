@@ -36,6 +36,7 @@
     "express-openid-connect": "^2.17.1",
     "firebase": "^10.12.0",
     "firebase-admin": "^12.1.0",
+    "mercadopago": "^2.0.9",
     "nodemailer": "^6.9.13",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.2",
