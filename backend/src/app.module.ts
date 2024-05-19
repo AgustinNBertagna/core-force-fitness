@@ -9,8 +9,9 @@ import typeOrmConfig from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { FilesModule } from './modules/files/files.module';
-import { FirebaseModule } from './firebase/firebase.module';
+import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { RateModule } from './modules/rate/rate.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
     FilesModule,
     FirebaseModule,
     PaymentsModule,
+    RateModule,
   ],
 })
 export class AppModule {}

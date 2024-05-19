@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateFirebaseDto } from 'src/dtos/create-firebase.dto';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
@@ -16,20 +21,38 @@ export class FirebaseService {
     private readonly userRepository: UserRepository,
     private readonly membershipsService: MembershipsService,
     private readonly emailsService: EmailsService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async createUserWithGoogle(createUserDto: CreateFirebaseDto): Promise<User> {
+  async createUserWithGoogle(createUserDto: CreateFirebaseDto) {
+    //problema con la promise por el message
     const { firebaseId, name, email, imagen } = createUserDto;
-
-    console.log(createUserDto);
 
     try {
       const existingUser = await this.usersRepository.findOne({
         where: { firebaseId },
       });
-      console.log(existingUser);
+
       if (existingUser) {
-        return existingUser;
+        const payload = {
+          sub: existingUser.id,
+          userId: existingUser.id,
+          name: existingUser.name,
+          email: existingUser.email,
+          role: existingUser.role,
+        };
+
+        try {
+          const token = this.jwtService.sign(payload);
+
+          return {
+            message: 'User logged in successfully',
+            token,
+            userId: existingUser.id,
+          };
+        } catch (error) {
+          throw new InternalServerErrorException('Failed to create JWT token');
+        }
       } else {
         const newUser: User = new User();
         newUser.firebaseId = createUserDto.firebaseId;
@@ -56,11 +79,29 @@ export class FirebaseService {
 
         await this.emailsService.sendWelcomeMail(name, email);
 
-        return savedUser;
+        const payload = {
+          sub: foundUser.id,
+          userId: foundUser.id,
+          name: foundUser.name,
+          email: foundUser.email,
+          role: foundUser.role,
+        };
+
+        try {
+          const token = this.jwtService.sign(payload);
+
+          return {
+            message: 'User logged in successfully',
+            token,
+            userId: foundUser.id,
+          };
+        } catch (error) {
+          throw new InternalServerErrorException('Failed to create JWT token');
+        }
       }
     } catch (error) {
       console.error(error);
-      throw new Error('Error interno del servidor');
+      throw new InternalServerErrorException('Error interno del servidor');
     }
   }
 }
