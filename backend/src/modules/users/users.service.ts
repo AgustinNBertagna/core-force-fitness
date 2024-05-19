@@ -5,6 +5,8 @@ import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
+import { Membership } from 'src/entities/membership.entity';
+import { UserMemberships } from 'src/entities/userMembership.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +14,8 @@ export class UsersService {
     private readonly userRepository: UserRepository,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(UserMemberships)
+    private membershipRepository: Repository<UserMemberships>,
   ) {}
 
   async getUsers(
@@ -88,6 +92,10 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
     user.isActive = false;
 
+    if (user.user_membership) {
+      await this.membershipRepository.delete(user.user_membership);
+    }
+    //students
     await this.usersRepository.save(user);
     return user.id;
   }
