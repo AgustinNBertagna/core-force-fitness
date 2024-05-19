@@ -9,7 +9,7 @@ import typeOrmConfig from './config/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
 import { FilesModule } from './modules/files/files.module';
-import { FirebaseModule } from './firebase/firebase.module';
+import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
