@@ -6,9 +6,12 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from './users.repository';
 import { Membership } from 'src/entities/membership.entity';
 import { UserMemberships } from 'src/entities/userMembership.entity';
+import { Rate } from 'src/entities/rate.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Membership, UserMemberships])],
+  imports: [
+    TypeOrmModule.forFeature([User, Membership, UserMemberships, Rate]),
+  ],
   controllers: [UsersController],
   providers: [UsersService, UserRepository],
   exports: [UserRepository],
