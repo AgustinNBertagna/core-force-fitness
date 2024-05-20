@@ -12,6 +12,7 @@ import { FilesModule } from './modules/files/files.module';
 import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { RateModule } from './modules/rate/rate.module';
+import { StripeModule } from './modules/stripe/stripe.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { RateModule } from './modules/rate/rate.module';
       signOptions: { expiresIn: '1h' },
       secret: process.env.JWT_SECRET,
     }),
+    StripeModule,
     UsersModule,
     MembershipsModule,
     AuthModule,
