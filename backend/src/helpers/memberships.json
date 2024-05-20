@@ -1,24 +1,24 @@
 [
   {
-    "name": "Free Membership",
+    "name": "Free",
     "price": 0,
     "description": "Limited access",
     "duration": "0 days"
   },
   {
-    "name": "Silver Membership",
+    "name": "Silver",
     "price": 6000,
     "description": "Extended access with additional perks. Enhanced customer support. Limited access to premium content.",
     "duration": "60 days"
   },
   {
-    "name": "Gold Membership",
+    "name": "Gold",
     "price": 10000,
     "description": "Enjoy premium benefits. Priority customer support. Access to exclusive premium content.",
     "duration": "90 days"
   },
   {
-    "name": "Platinum Membership",
+    "name": "Platinum",
     "price": 15000,
     "description": "Get exclusive privileges. Dedicated customer support. Access to all premium content. Priority access to new features.",
     "duration": "365 days"
