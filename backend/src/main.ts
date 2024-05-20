@@ -9,6 +9,6 @@ async function bootstrap() {
   app.enableCors();
   app.use(new Logger().use);
   app.useGlobalPipes(Validation);
-  await app.listen(port as unknown as number);
+  await app.listen(port as unknown as number, '0.0.0.0');
 }
 bootstrap();
