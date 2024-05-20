@@ -25,9 +25,9 @@ export class UsersService {
     private rateRepository: Repository<Rate>,
   ) {}
 
+  // page: number,
+  // limit: number,
   async getUsers(
-    page: number,
-    limit: number,
     userType: string,
     membership: string,
     gender: string,
@@ -38,12 +38,12 @@ export class UsersService {
       gender,
     );
 
-    const start = (page - 1) * limit;
-    const end = start + +limit;
+    // const start = (page - 1) * limit;
+    // const end = start + +limit;
 
-    const paginatedUsers = users.slice(start, end);
+    // const paginatedUsers = users.slice(start, end);
 
-    return paginatedUsers;
+    return users;
   }
 
   async getUserById(id: string): Promise<User> {
