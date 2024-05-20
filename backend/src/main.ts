@@ -5,9 +5,10 @@ import { Validation } from './pipes/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const port = process.env.PORT ?? 10000;
   app.enableCors();
   app.use(new Logger().use);
   app.useGlobalPipes(Validation);
-  await app.listen(process.env.PORT as unknown as number);
+  await app.listen(port as unknown as number);
 }
 bootstrap();
