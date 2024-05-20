@@ -6,26 +6,20 @@
     "duration": "0 days"
   },
   {
-    "name": "Bronze",
-    "price": 10,
-    "description": "Access to basic features. Limited customer support. No access to premium content.",
-    "duration": "30 days"
-  },
-  {
     "name": "Silver",
-    "price": 17,
+    "price": 6000,
     "description": "Extended access with additional perks. Enhanced customer support. Limited access to premium content.",
     "duration": "60 days"
   },
   {
     "name": "Gold",
-    "price": 30,
+    "price": 10000,
     "description": "Enjoy premium benefits. Priority customer support. Access to exclusive premium content.",
     "duration": "90 days"
   },
   {
     "name": "Platinum",
-    "price": 70,
+    "price": 15000,
     "description": "Get exclusive privileges. Dedicated customer support. Access to all premium content. Priority access to new features.",
     "duration": "365 days"
   }

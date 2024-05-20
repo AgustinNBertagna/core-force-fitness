@@ -1,10 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from './users.repository';
 import { User } from 'src/entities/user.entity';
 import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
+import { Membership } from 'src/entities/membership.entity';
+import { UserMemberships } from 'src/entities/userMembership.entity';
+import { Rate } from 'src/entities/rate.entity';
 
 @Injectable()
 export class UsersService {
@@ -12,6 +19,10 @@ export class UsersService {
     private readonly userRepository: UserRepository,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(UserMemberships)
+    private membershipRepository: Repository<UserMemberships>,
+    @InjectRepository(Rate)
+    private rateRepository: Repository<Rate>,
   ) {}
 
   async getUsers(
@@ -88,6 +99,28 @@ export class UsersService {
     if (!user) throw new NotFoundException('User not found');
     user.isActive = false;
 
+    //BORRAR DESPUES DEL DESARROLLO
+    const rateRelation = await this.rateRepository.findOneBy({ id: user.id });
+    console.log(rateRelation);
+
+    try {
+      if (user.user_membership) {
+        await this.membershipRepository.delete(user.user_membership);
+      }
+      if (rateRelation) {
+        await this.rateRepository.remove(rateRelation);
+      }
+      if (user) {
+        await this.membershipRepository.delete(user.user_membership);
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Cannot delete relations from entity',
+      );
+    }
+    //BORRAR DESPUES DEL DESARROLLO
+
+    //students
     await this.usersRepository.save(user);
     return user.id;
   }
