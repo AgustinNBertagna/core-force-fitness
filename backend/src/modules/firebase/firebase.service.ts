@@ -26,12 +26,11 @@ export class FirebaseService {
 
   async createUserWithGoogle(createUserDto: CreateFirebaseDto) {
     //problema con la promise por el message
+
     const { firebaseId, name, email, imagen } = createUserDto;
 
     try {
-      const existingUser = await this.usersRepository.findOne({
-        where: { firebaseId },
-      });
+      const existingUser = await this.userRepository.getUserByEmail(email);
 
       if (existingUser) {
         const payload = {
