@@ -12,11 +12,7 @@ export class PaymentsService {
     private readonly membershipsService: MembershipsService,
   ) {}
 
-  async getSuscriptionUrl(userId: string, membershipId: string) {
-    const user: User | null = await this.usersRepository.getUserById(userId);
-
-    if (!user) throw new NotFoundException('User not found');
-
+  async getSuscriptionUrl(membershipId: string) {
     const memberships: Membership[] =
       await this.membershipsService.getMemberships();
 

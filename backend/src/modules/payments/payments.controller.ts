@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreateSubscriptionDto } from 'src/dtos/create-subscription.dto';
 
@@ -6,12 +6,9 @@ import { CreateSubscriptionDto } from 'src/dtos/create-subscription.dto';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Get()
-  /*   @UseGuards(AuthGuard) */
-  async getSubscriptionUrl(@Body() data: any) {
-    const { userId, membershipId } = data;
-
-    return await this.paymentsService.getSuscriptionUrl(userId, membershipId);
+  @Get(':membershipId')
+  async getSubscriptionUrl(@Param('membershipId') membershipId: string) {
+    return await this.paymentsService.getSuscriptionUrl(membershipId);
   }
 
   @Post('subscription')
