@@ -3,6 +3,7 @@ import { User } from 'src/entities/user.entity';
 import { UserRepository } from '../users/users.repository';
 import { MembershipsService } from '../memberships/memberships.service';
 import { MercadoPagoConfig, PreApproval, PreApprovalPlan } from 'mercadopago';
+import { Membership } from 'src/entities/membership.entity';
 
 @Injectable()
 export class PaymentsService {
@@ -10,6 +11,45 @@ export class PaymentsService {
     private readonly usersRepository: UserRepository,
     private readonly membershipsService: MembershipsService,
   ) {}
+
+  async getSuscriptionUrl(userId: string, membershipId: string) {
+    const user: User | null = await this.usersRepository.getUserById(userId);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const memberships: Membership[] =
+      await this.membershipsService.getMemberships();
+
+    const membership: Membership | undefined = memberships.find(
+      (membership) => {
+        return membership.id === membershipId;
+      },
+    );
+
+    if (!membership) throw new NotFoundException('Membership not found');
+
+    const client = new MercadoPagoConfig({
+      accessToken:
+        'TEST-1741331140792474-051617-a51f20444f634a85167abd2cca6ad17c-1814656473',
+      options: { timeout: 5000 },
+    });
+    const preApprovalPlan = new PreApprovalPlan(client);
+
+    let preApprovalPlanId;
+
+    if (membership.name === 'Platinum')
+      preApprovalPlanId = '2c9380848f813057018f83b2942700f1';
+    if (membership.name === 'Gold')
+      preApprovalPlanId = '2c9380848f81302d018f83b3d09400f9';
+    if (membership.name === 'Silver')
+      preApprovalPlanId = '2c9380848f813057018f83b45c3a00f3';
+
+    const { init_point } = await preApprovalPlan.get({
+      preApprovalPlanId,
+    });
+
+    return init_point;
+  }
 
   async createSubscription(
     userId: string,
