@@ -1,0 +1,26 @@
+[
+    {
+        "id": "1b2d3e4f-5678-90ab-cdef-1234567890ab",
+        "name": "Morning Cardio Routine",
+        "type": "cardio",
+        "pdf_url": "https://example.com/routines/morning_cardio.pdf"
+    },
+    {
+        "id": "2c3d4e5f-6789-01ab-cdef-2345678901bc",
+        "name": "Strength Training Routine",
+        "type": "strength",
+        "pdf_url": "https://example.com/routines/strength_training.pdf"
+    },
+    {
+        "id": "3d4e5f6a-7890-12bc-def1-3456789012cd",
+        "name": "Flexibility Routine",
+        "type": "flexibility",
+        "pdf_url": "https://example.com/routines/flexibility.pdf"
+    },
+    {
+        "id": "4e5f6a7b-8901-23cd-ef12-4567890123de",
+        "name": "HIIT Routine",
+        "type": "hiit",
+        "pdf_url": null
+    }
+]
