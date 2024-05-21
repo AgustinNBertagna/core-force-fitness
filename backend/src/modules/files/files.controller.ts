@@ -32,4 +32,13 @@ export class FilesController {
   ) {
     return await this.filesService.updateUserImage(userId, file);
   }
+
+  @Post('uploadPdf/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadPdf(
+    @Param('id') routineId: string,
+    @UploadedFile(FileParser) file: Express.Multer.File,
+  ) {
+    return await this.filesService.uploadPdf(routineId, file);
+  }
 }
