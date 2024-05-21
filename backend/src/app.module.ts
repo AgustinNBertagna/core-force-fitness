@@ -13,6 +13,7 @@ import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { RateModule } from './modules/rate/rate.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { StripeModule } from './modules/stripe/stripe.module';
     FirebaseModule,
     PaymentsModule,
     RateModule,
+    WebhookModule,
   ],
 })
 export class AppModule {}
