@@ -16,7 +16,7 @@ export class Routine {
 
   @Column({
     type: 'varchar',
-    nullable: true,
+    nullable: false,
   })
   pdf_url: string;
 }

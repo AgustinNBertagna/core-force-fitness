@@ -1,9 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { FilesRepository } from './files.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Routine } from 'src/entities/routines.entity';
+import { CreateRoutineDto } from 'src/dtos/create-routine.dto';
+import { Routines } from 'src/helpers/routines';
 
 @Injectable()
 export class FilesService {
@@ -52,28 +58,42 @@ export class FilesService {
     return 'User image successfully updated';
   }
 
-  async uploadPdf(routineId: string, file: Express.Multer.File) {
-    const routine = await this.routineRepository.findOne({
-      where: { id: routineId },
-    });
-
-    if (!routine) {
-      throw new NotFoundException('Routine not found');
-    }
-
+  async uploadPdf(file: Express.Multer.File, routineData: CreateRoutineDto) {
     const uploadPdf = await this.filesRepository.uploadPdf(file);
 
-    if (routine.id) {
-      await this.routineRepository.update(routine.id, {
-        pdf_url: uploadPdf.secure_url,
-      });
-    } else {
-      throw new Error('Routine ID not found');
-    }
+    const newRoutine = this.routineRepository.create({
+      pdf_url: uploadPdf.secure_url,
+      type: routineData.typeRoutine,
+      name: routineData.routineName,
+    });
+
+    console.log(newRoutine);
+    await this.routineRepository.save(newRoutine);
 
     return {
-      message: 'PDF uploaded successfully',
+      message: 'PDF uploaded and new routine created successfully',
       pdfUrl: uploadPdf.secure_url,
     };
+  }
+  async seedRoutines() {
+    const routines = Routines.map((routineData) => {
+      return this.routineRepository.create(routineData);
+    });
+
+    try {
+      await this.routineRepository.save(routines);
+      return 'Routines preloaded';
+    } catch (err) {
+      throw new Error('Failed to seed routines');
+    }
+  }
+
+  async getRoutines(): Promise<Routine[]> {
+    try {
+      const routines = await this.routineRepository.find();
+      return routines;
+    } catch (err) {
+      throw new NotFoundException('Memberships not found');
+    }
   }
 }
