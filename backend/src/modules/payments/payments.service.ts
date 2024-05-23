@@ -12,7 +12,7 @@ export class PaymentsService {
     private readonly membershipsService: MembershipsService,
   ) {}
 
-  async getSuscriptionUrl(membershipId: string) {
+  async getSubscriptionUrl(membershipId: string) {
     const memberships: Membership[] =
       await this.membershipsService.getMemberships();
 
@@ -24,14 +24,6 @@ export class PaymentsService {
 
     if (!membership) throw new NotFoundException('Membership not found');
 
-    const accessToken = process.env.MP_ACCESS_TOKEN;
-
-    const client = new MercadoPagoConfig({
-      accessToken: accessToken as string,
-      options: { timeout: 5000 },
-    });
-    const preApprovalPlan = new PreApprovalPlan(client);
-
     let preApprovalPlanId;
 
     if (membership.name === 'Platinum')
@@ -41,11 +33,18 @@ export class PaymentsService {
     if (membership.name === 'Silver')
       preApprovalPlanId = '2c9380848f813057018f83b45c3a00f3';
 
+    const accessToken = process.env.MP_ACCESS_TOKEN;
+
+    const client = new MercadoPagoConfig({
+      accessToken: accessToken as string,
+      options: { timeout: 5000 },
+    });
+
+    const preApprovalPlan = new PreApprovalPlan(client);
+
     const { init_point } = await preApprovalPlan.get({
       preApprovalPlanId,
     });
-
-    console.log('Init point:', init_point);
 
     return init_point;
   }

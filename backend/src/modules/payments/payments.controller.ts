@@ -8,7 +8,7 @@ export class PaymentsController {
 
   @Get(':membershipId')
   async getSubscriptionUrl(@Param('membershipId') membershipId: string) {
-    return await this.paymentsService.getSuscriptionUrl(membershipId);
+    return await this.paymentsService.getSubscriptionUrl(membershipId);
   }
 
   @Post('subscription')

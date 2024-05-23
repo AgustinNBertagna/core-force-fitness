@@ -70,10 +70,7 @@ export class MembershipsService {
 
     const endDate = new Date(startDate);
 
-    endDate.setDate(startDate.getDate() + durationNumber); // revisar
-
-    console.log('Fecha de inicio:', startDate);
-    console.log('Fecha final:', endDate);
+    endDate.setDate(startDate.getDate() + durationNumber);
 
     const newUserMembership = new UserMemberships();
     newUserMembership.membership = userMembership;
