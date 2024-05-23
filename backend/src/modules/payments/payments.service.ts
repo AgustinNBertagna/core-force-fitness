@@ -24,9 +24,10 @@ export class PaymentsService {
 
     if (!membership) throw new NotFoundException('Membership not found');
 
+    const accessToken = process.env.MP_ACCESS_TOKEN;
+
     const client = new MercadoPagoConfig({
-      accessToken:
-        'TEST-1741331140792474-051617-a51f20444f634a85167abd2cca6ad17c-1814656473',
+      accessToken: accessToken as string,
       options: { timeout: 5000 },
     });
     const preApprovalPlan = new PreApprovalPlan(client);
@@ -43,6 +44,8 @@ export class PaymentsService {
     const { init_point } = await preApprovalPlan.get({
       preApprovalPlanId,
     });
+
+    console.log('Init point:', init_point);
 
     return init_point;
   }
@@ -66,12 +69,11 @@ export class PaymentsService {
     const startDateStr = startDate.toString();
     const endDateStr = endDate.toString();
 
-    const ACCESS_TOKEN =
-      'APP_USR-1741331140792474-051617-39e4b0e5d14e1422896bc7d505461223-1814656473';
+    const accessToken = process.env.MP_PRODUCTION_ACCESS_TOKEN;
 
     try {
       const client = new MercadoPagoConfig({
-        accessToken: ACCESS_TOKEN,
+        accessToken: accessToken as string,
         options: { timeout: 5000 },
       });
 
