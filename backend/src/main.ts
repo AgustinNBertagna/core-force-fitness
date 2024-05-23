@@ -8,6 +8,7 @@ async function bootstrap() {
   app.enableCors();
   app.use(new Logger().use);
   app.useGlobalPipes(Validation);
-  await app.listen(parseInt(process.env.PORT as string));
+  await app.listen(3000);
 }
+// parseInt(process.env.PORT as string
 bootstrap();
