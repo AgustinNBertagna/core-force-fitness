@@ -20,8 +20,6 @@ export class UserRepository {
   ): Promise<User[]> {
     const where: Partial<User> = {};
 
-    where.isActive = true;
-
     if (userType === Role.USER) where.role = Role.USER;
     if (userType === Role.TRAINER) where.role = Role.TRAINER;
     if (userType === Role.ADMIN) where.role = Role.ADMIN;
