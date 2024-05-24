@@ -15,6 +15,7 @@ import { RateModule } from './modules/rate/rate.module';
 import { StripeModule } from './modules/stripe/stripe.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
 import { TrainersModule } from './modules/trainers/trainers.module';
+import { ChatbotModule } from './modules/chatbot/chatbot.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { TrainersModule } from './modules/trainers/trainers.module';
     RateModule,
     WebhookModule,
     TrainersModule,
+    ChatbotModule,
   ],
 })
 export class AppModule {}
