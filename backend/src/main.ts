@@ -10,5 +10,4 @@ async function bootstrap() {
   app.useGlobalPipes(Validation);
   await app.listen(3000);
 }
-// parseInt(process.env.PORT as string
 bootstrap();
