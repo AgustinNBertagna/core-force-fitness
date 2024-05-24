@@ -18,7 +18,8 @@ export class TrainersService {
 
   async getStudents() {
     const students = await this.usersRepository.findBy({
-      trainer: false,
+      role: Role.USER,
+      trainer: undefined,
       isActive: true,
       user_membership: { membership: { name: Not('Free') } },
     });
