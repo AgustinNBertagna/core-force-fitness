@@ -22,10 +22,7 @@ export class ChatbotController {
       message,
     );
 
-    console.log(
-      'Este es el mensaje que se debe devolver, ya estamos en el controller de vuelta',
-      chatbotMessage,
-    );
+    console.log('Este es la data que recibe el front:', chatbotMessage);
 
     return chatbotMessage;
   }
