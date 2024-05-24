@@ -23,4 +23,13 @@ export class TrainersService {
     if (!students.length) throw new NotFoundException('Students not found');
     return students;
   }
+
+  async assignStudents(id: string, userId: string) {
+    const trainer = await this.usersRepository.findOneBy({ id });
+    if (!trainer) throw new NotFoundException('Trainer not found');
+    const student = await this.usersRepository.findOneBy({ id: userId });
+    if (!student) throw new NotFoundException('Student not found');
+    await this.usersRepository.update(student.id, { trainer });
+    return { message: 'Student successfully assigned' };
+  }
 }

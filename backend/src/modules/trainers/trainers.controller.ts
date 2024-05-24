@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { TrainersService } from './trainers.service';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/helpers/roles.enum';
@@ -20,5 +20,12 @@ export class TrainersController {
   @UseGuards(AuthGuard, RolesGuard)
   async getStudents(@Param('id') id: string) {
     return await this.trainersService.getStudents(id);
+  }
+
+  @Post('students/:id')
+  @Roles(Role.TRAINER)
+  @UseGuards(AuthGuard, RolesGuard)
+  async assignStudent(@Param('id') id: string, @Body() userId: string) {
+    return await this.trainersService.assignStudents(id, userId);
   }
 }
