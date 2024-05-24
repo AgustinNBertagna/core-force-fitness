@@ -4,41 +4,50 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 @Injectable()
 export class ChatbotService {
   async getResponse(history: any, message: any) {
-    // Access your API key as an environment variable (see "Set up your API key" above)
-    console.log(
-      "We're in the chatbot service:",
-      'History:',
-      history,
-      'Message:',
-      message,
-    );
     const genAI = new GoogleGenerativeAI(
       process.env.GOOGLE_GEN_AI_KEY as string,
     );
 
-    console.log('Were about to set the model');
-    // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
     const model = genAI.getGenerativeModel({
       model: 'gemini-1.5-flash-latest',
     });
 
+    console.log('History sent to API:', history);
+
+    const initialContext = [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: 'Hi, you are a virtual fitness trainer. Please answer only questions related to gym workouts, exercises, fitness routines, and nutrition.',
+          },
+        ],
+      },
+      {
+        role: 'model',
+        parts: [
+          {
+            text: 'Hello! I am your virtual fitness trainer. I can help you with questions and advice related to gym workouts, exercises, fitness routines, and nutrition. Please note that I will only respond to questions related to fitness and gym activities. How can I assist you with your fitness goals today?',
+          },
+        ],
+      },
+    ];
+
+    const fullHistory = [...initialContext, ...history];
+
     const chat = model.startChat({
-      history,
+      history: fullHistory,
       generationConfig: {
-        maxOutputTokens: 100,
+        maxOutputTokens: 40,
       },
     });
 
     const result = await chat.sendMessage(message);
 
-    console.log('Pasa el send message');
-
     const response = await result.response;
 
-    console.log('Pasa el response', response);
-
     const text = response.text();
-    console.log(text);
+    console.log('Text:', text);
 
     return text;
   }
