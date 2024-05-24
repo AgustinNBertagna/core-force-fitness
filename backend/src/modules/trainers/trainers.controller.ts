@@ -15,11 +15,18 @@ export class TrainersController {
     return await this.trainersService.getTrainers();
   }
 
+  @Get('students')
+  @Roles(Role.TRAINER)
+  @UseGuards(AuthGuard, RolesGuard)
+  async getStudents() {
+    return await this.trainersService.getStudents();
+  }
+
   @Get('students/:id')
   @Roles(Role.TRAINER)
   @UseGuards(AuthGuard, RolesGuard)
-  async getStudents(@Param('id') id: string) {
-    return await this.trainersService.getStudents(id);
+  async getTrainerStudents(@Param('id') id: string) {
+    return await this.trainersService.getTrainerStudents(id);
   }
 
   @Post('students/:id')

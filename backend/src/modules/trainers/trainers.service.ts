@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { Role } from 'src/helpers/roles.enum';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 @Injectable()
 export class TrainersService {
@@ -16,7 +16,17 @@ export class TrainersService {
     return trainers;
   }
 
-  async getStudents(id: string) {
+  async getStudents() {
+    const students = await this.usersRepository.findBy({
+      trainer: false,
+      isActive: true,
+      user_membership: { membership: { name: Not('Free') } },
+    });
+    if (!students.length) throw new NotFoundException('Students not found');
+    return students;
+  }
+
+  async getTrainerStudents(id: string) {
     const trainer = await this.usersRepository.findOneBy({ id });
     if (!trainer) throw new NotFoundException('Trainer not found');
     const students = await this.usersRepository.findBy({ trainer });
