@@ -40,7 +40,7 @@ export class TrainersController {
   @Post('students/:id')
   @Roles(Role.TRAINER)
   @UseGuards(AuthGuard, RolesGuard)
-  async assignStudent(@Param('id') id: string, @Body() userId: string) {
+  async assignStudent(@Param('id') id: string, @Body('userId') userId: string) {
     return await this.trainersService.assignStudents(id, userId);
   }
 

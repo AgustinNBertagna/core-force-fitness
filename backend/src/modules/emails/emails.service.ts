@@ -25,4 +25,19 @@ export class EmailsService {
 
     await this.transporter.sendMail(email);
   }
+
+  async sendPricingEmail(username: string, recipient: string) {
+    const pricingMail = fs.readFileSync(
+      'src/helpers/pricingMail.html',
+      'utf-8',
+    );
+    const email = {
+      from: process.env.MAIL_USER,
+      to: recipient,
+      subject: `Hello dear ${username}! See our full pricing list!`,
+      html: pricingMail,
+    };
+
+    await this.transporter.sendMail(email);
+  }
 }
