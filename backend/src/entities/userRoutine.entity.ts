@@ -3,7 +3,7 @@ import { Routine } from './routines.entity';
 import { User } from './user.entity';
 
 @Entity({
-  name: 'users_memberships',
+  name: 'users_routines',
 })
 export class UsersRoutines {
   @PrimaryGeneratedColumn('uuid')
