@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { TrainersService } from './trainers.service';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/helpers/roles.enum';
@@ -34,5 +42,19 @@ export class TrainersController {
   @UseGuards(AuthGuard, RolesGuard)
   async assignStudent(@Param('id') id: string, @Body() userId: string) {
     return await this.trainersService.assignStudents(id, userId);
+  }
+
+  @Delete('routine')
+  @Roles(Role.TRAINER)
+  @UseGuards(AuthGuard, RolesGuard)
+  async deleteRoutine(@Param('id') id: string) {
+    return await this.trainersService.deleteRoutine(id);
+  }
+
+  @Post('students/routine')
+  @Roles(Role.TRAINER)
+  @UseGuards(AuthGuard, RolesGuard)
+  async assignRoutine(@Param('id') id: string, @Body() userId: string) {
+    return await this.trainersService.assignRoutine(id, userId);
   }
 }

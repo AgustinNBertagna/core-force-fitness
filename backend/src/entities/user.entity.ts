@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { UserMemberships } from './userMembership.entity';
 import { Role } from 'src/helpers/roles.enum';
+import { UsersRoutines } from './userRoutine.entity';
 
 @Entity({
   name: 'users',
@@ -77,4 +78,9 @@ export class User {
     nullable: true,
   })
   user_membership: UserMemberships;
+
+  @OneToMany(() => UsersRoutines, (usersRoutines) => usersRoutines.user, {
+    nullable: true,
+  })
+  user_routines: UsersRoutines;
 }

@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Routine } from 'src/entities/routines.entity';
 import { User } from 'src/entities/user.entity';
+import { UsersRoutines } from 'src/entities/userRoutine.entity';
 import { Role } from 'src/helpers/roles.enum';
 import { Not, Repository } from 'typeorm';
 
@@ -8,6 +10,9 @@ import { Not, Repository } from 'typeorm';
 export class TrainersService {
   constructor(
     @InjectRepository(User) private usersRepository: Repository<User>,
+    @InjectRepository(Routine) private routineRepository: Repository<Routine>,
+    @InjectRepository(UsersRoutines)
+    private usersRoutinesRepository: Repository<UsersRoutines>,
   ) {}
 
   async getTrainers() {
@@ -42,5 +47,35 @@ export class TrainersService {
     if (!student) throw new NotFoundException('Student not found');
     await this.usersRepository.update(student.id, { trainer });
     return { message: 'Student successfully assigned' };
+  }
+
+  async deleteRoutine(id: string): Promise<string> {
+    const routine: Routine | null = await this.routineRepository.findOne({
+      where: { id },
+    });
+    if (!routine) throw new NotFoundException('Routine not found');
+    await this.routineRepository.delete(routine.id);
+    return routine.id;
+  }
+
+  async assignRoutine(routineId: string, userId: string) {
+    const routine = await this.routineRepository.findOne({
+      where: { id: routineId },
+    });
+    if (!routine) throw new NotFoundException('Routine not found');
+
+    const user = await this.usersRepository.findOne({
+      where: { id: userId },
+      relations: ['user_routines'],
+    });
+    if (!user) throw new NotFoundException('User not found');
+
+    const userRoutine = new UsersRoutines();
+    userRoutine.routine = routine;
+    userRoutine.user = user;
+
+    await this.usersRoutinesRepository.save(userRoutine);
+
+    return { message: 'Routine successfully assigned' };
   }
 }
