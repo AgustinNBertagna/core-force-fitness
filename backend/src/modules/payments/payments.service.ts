@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserRepository } from '../users/users.repository';
 import { MembershipsService } from '../memberships/memberships.service';
-import { MercadoPagoConfig, PreApprovalPlan } from 'mercadopago';
+import { MercadoPagoConfig, PreApproval, PreApprovalPlan } from 'mercadopago';
 import { Membership } from 'src/entities/membership.entity';
 
 @Injectable()
@@ -46,5 +46,23 @@ export class PaymentsService {
     });
 
     return init_point;
+  }
+
+  async cancelSubscription(preapprovalId: string) {
+    const accessToken = process.env.MP_ACCESS_TOKEN;
+
+    const client = new MercadoPagoConfig({
+      accessToken: accessToken as string,
+      options: { timeout: 9000 },
+    });
+
+    const preApproval = new PreApproval(client);
+
+    await preApproval.update({
+      id: preapprovalId,
+      body: {
+        status: 'cancelled',
+      },
+    });
   }
 }
