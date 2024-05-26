@@ -62,6 +62,11 @@ export class MembershipsService {
 
     const user: User | null = await this.usersRepository.getUserById(userId);
 
+    await this.userMembershipRepository.update(
+      { user: { id: userId }, is_active: true },
+      { is_active: false },
+    );
+
     if (!user) throw new NotFoundException('User not found');
 
     const durationNumber = Number(userMembership.duration.split(' ')[0]);
