@@ -15,6 +15,9 @@ export class UserMemberships {
   @ManyToOne(() => User, (user) => user.user_membership)
   user: User;
 
+  @Column({ type: 'varchar', nullable: true })
+  preapproval_id: string;
+
   @Column({ type: 'timestamp', nullable: false })
   start_date: Date;
 

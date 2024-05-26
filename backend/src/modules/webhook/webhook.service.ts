@@ -29,6 +29,12 @@ export class WebhookService {
       id: paymentId,
     });
 
+    console.log('Payment info:', paymentInfo);
+
+    const preapprovalId = paymentInfo.metadata.preapproval_id;
+
+    console.log('Preapproval ID:', preapprovalId);
+
     const email = paymentInfo.payer?.email;
 
     if (!email) throw new BadRequestException('Invalid email');
