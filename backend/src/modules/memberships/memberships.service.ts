@@ -51,7 +51,11 @@ export class MembershipsService {
     return membership;
   }
 
-  async assignMembership(userId: string, membershipName: string) {
+  async assignMembership(
+    userId: string,
+    membershipName: string,
+    preapprovalId?: string,
+  ) {
     const memberships: Membership[] = await this.getMemberships();
 
     const userMembership: Membership | undefined = memberships.find(
@@ -80,6 +84,7 @@ export class MembershipsService {
     const newUserMembership = new UserMemberships();
     newUserMembership.membership = userMembership;
     newUserMembership.user = user;
+    if (preapprovalId) newUserMembership.preapproval_id = preapprovalId;
     newUserMembership.start_date = startDate;
     newUserMembership.end_date = endDate;
 

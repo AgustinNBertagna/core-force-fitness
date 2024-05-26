@@ -8,5 +8,6 @@ import { MembershipsModule } from '../memberships/memberships.module';
   imports: [UsersModule, MembershipsModule],
   controllers: [PaymentsController],
   providers: [PaymentsService],
+  exports: [PaymentsService],
 })
 export class PaymentsModule {}

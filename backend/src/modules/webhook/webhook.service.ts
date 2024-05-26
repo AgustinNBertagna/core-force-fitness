@@ -47,6 +47,10 @@ export class WebhookService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    await this.membershipService.assignMembership(user.id, membershipName);
+    await this.membershipService.assignMembership(
+      user.id,
+      membershipName,
+      preapprovalId,
+    );
   }
 }
