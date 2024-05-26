@@ -47,5 +47,6 @@ import { ChatbotModule } from './modules/chatbot/chatbot.module';
     TrainersModule,
     ChatbotModule,
   ],
+  providers: [],
 })
 export class AppModule {}
