@@ -3,12 +3,17 @@ import { UserRepository } from '../users/users.repository';
 import { MembershipsService } from '../memberships/memberships.service';
 import { MercadoPagoConfig, PreApproval, PreApprovalPlan } from 'mercadopago';
 import { Membership } from 'src/entities/membership.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserMemberships } from 'src/entities/userMembership.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     private readonly usersRepository: UserRepository,
     private readonly membershipsService: MembershipsService,
+    @InjectRepository(UserMemberships)
+    private userMemberships: Repository<UserMemberships>,
   ) {}
 
   async getSubscriptionUrl(membershipId: string) {
@@ -48,7 +53,17 @@ export class PaymentsService {
     return init_point;
   }
 
-  async cancelSubscription(preapprovalId: string) {
+  async cancelSubscription(userId: string) {
+    const userMembership: UserMemberships | null =
+      await this.userMemberships.findOne({
+        where: { user: { id: userId }, is_active: true },
+      });
+
+    if (!userMembership)
+      throw new NotFoundException('User membership not found');
+
+    const { preapproval_id } = userMembership;
+
     const accessToken = process.env.MP_ACCESS_TOKEN;
 
     const client = new MercadoPagoConfig({
@@ -59,10 +74,12 @@ export class PaymentsService {
     const preApproval = new PreApproval(client);
 
     await preApproval.update({
-      id: preapprovalId,
+      id: preapproval_id,
       body: {
         status: 'cancelled',
       },
     });
+
+    return { message: 'Subscription successfully cancelled' };
   }
 }

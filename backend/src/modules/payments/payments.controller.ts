@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Put } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 
 @Controller('payments')
@@ -8,5 +8,10 @@ export class PaymentsController {
   @Get(':membershipId')
   async getSubscriptionUrl(@Param('membershipId') membershipId: string) {
     return await this.paymentsService.getSubscriptionUrl(membershipId);
+  }
+
+  @Put(':userId')
+  async cancelSubscription(@Param('userId') userId: string) {
+    return await this.paymentsService.cancelSubscription(userId);
   }
 }
