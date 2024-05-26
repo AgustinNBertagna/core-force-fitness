@@ -51,10 +51,10 @@ export class TrainersController {
     return await this.trainersService.deleteRoutine(id);
   }
 
-  @Post('students/routine')
+  @Post('students/routine/:id')
   @Roles(Role.TRAINER)
   @UseGuards(AuthGuard, RolesGuard)
-  async assignRoutine(@Param('id') id: string, @Body() userId: string) {
+  async assignRoutine(@Param('id') id: string, @Body('userId') userId: string) {
     return await this.trainersService.assignRoutine(id, userId);
   }
 }

@@ -52,7 +52,10 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
+    // const user = await this.usersRepository.findOne({
+    //   where: { id },
+    //   relations: ['orders'],
+    // });
     return user;
   }
 

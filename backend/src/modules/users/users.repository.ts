@@ -63,7 +63,10 @@ export class UserRepository {
   async getUserById(id: string): Promise<User | null> {
     const user: User | null = await this.usersRepository.findOne({
       where: { id, isActive: true },
-      relations: { user_membership: { membership: true } },
+      relations: {
+        user_membership: { membership: true },
+        user_routines: { routine: true },
+      },
       select: [
         'address',
         'birthdate',
