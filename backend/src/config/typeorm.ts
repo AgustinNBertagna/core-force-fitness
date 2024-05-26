@@ -17,14 +17,14 @@ const config = {
   logging: ['error'],
   synchronize: true,
   // dropSchema: true,
-  ssl: {
-    rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
-  },
-  extra: {
-    ssl: {
-      require: true,
-    },
-  },
+  // ssl: {
+  //   rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
+  // },
+  // extra: {
+  //   ssl: {
+  //     require: true,
+  //   },
+  // },
 };
 export default registerAs('typeorm', () => config);
 
