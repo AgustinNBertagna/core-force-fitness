@@ -10,13 +10,15 @@ import * as data from '../../helpers/memberships.json';
 import { UserRepository } from '../users/users.repository';
 import { User } from 'src/entities/user.entity';
 import { UserMemberships } from 'src/entities/userMembership.entity';
+import { PaymentsRepository } from '../payments/payments.repository';
 
 @Injectable()
 export class MembershipsService {
   constructor(
+    private readonly usersRepository: UserRepository,
+    private readonly paymentsRepository: PaymentsRepository,
     @InjectRepository(Membership)
     private membershipRepository: Repository<Membership>,
-    private readonly usersRepository: UserRepository,
     @InjectRepository(UserMemberships)
     private userMembershipRepository: Repository<UserMemberships>,
   ) {}
@@ -58,22 +60,47 @@ export class MembershipsService {
   ) {
     const memberships: Membership[] = await this.getMemberships();
 
-    const userMembership: Membership | undefined = memberships.find(
+    const membership: Membership | undefined = memberships.find(
       (membership) => membershipName === membership.name,
     );
 
-    if (!userMembership) throw new NotFoundException('Membership not found');
+    if (!membership) throw new NotFoundException('Membership not found');
 
     const user: User | null = await this.usersRepository.getUserById(userId);
 
-    await this.userMembershipRepository.update(
-      { user: { id: userId }, is_active: true },
-      { is_active: false },
-    );
-
     if (!user) throw new NotFoundException('User not found');
 
-    const durationNumber = Number(userMembership.duration.split(' ')[0]);
+    const activeUserMembership: UserMemberships | null =
+      await this.userMembershipRepository.findOne({
+        where: { user: { id: user.id }, is_active: true },
+      });
+
+    if (!activeUserMembership && membership.name !== 'Free')
+      throw new NotFoundException('User membership not found');
+
+    console.log(activeUserMembership);
+
+    console.log(
+      'Preapproval Id to be cancelled',
+      activeUserMembership?.preapproval_id,
+    );
+
+    // Puede que acá haya un error cuando se trate de cancelar membresía Free
+
+    if (activeUserMembership && activeUserMembership.preapproval_id !== null) {
+      await this.paymentsRepository.cancelSubscription(
+        activeUserMembership?.preapproval_id,
+      );
+    }
+
+    if (activeUserMembership) {
+      await this.userMembershipRepository.update(
+        { id: activeUserMembership.id },
+        { is_active: false },
+      );
+    }
+
+    const durationNumber = Number(membership.duration.split(' ')[0]);
 
     const startDate = new Date();
 
@@ -82,7 +109,7 @@ export class MembershipsService {
     endDate.setDate(startDate.getDate() + durationNumber);
 
     const newUserMembership = new UserMemberships();
-    newUserMembership.membership = userMembership;
+    newUserMembership.membership = membership;
     newUserMembership.user = user;
     if (preapprovalId) newUserMembership.preapproval_id = preapprovalId;
     newUserMembership.start_date = startDate;
