@@ -14,6 +14,6 @@ import { Rate } from 'src/entities/rate.entity';
   ],
   controllers: [UsersController],
   providers: [UsersService, UserRepository],
-  exports: [UserRepository],
+  exports: [UserRepository, UsersService],
 })
 export class UsersModule {}

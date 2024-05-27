@@ -8,7 +8,7 @@ import { FilesRepository } from './files.repository';
 import { Routine } from 'src/entities/routines.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User,Routine])],
+  imports: [TypeOrmModule.forFeature([User, Routine])],
   controllers: [FilesController],
   providers: [FilesService, cloudinaryConfig, FilesRepository],
 })
