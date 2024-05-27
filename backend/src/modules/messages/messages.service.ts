@@ -27,7 +27,7 @@ export class MessagesService {
     let chat = await this.chatRepository.findOne({ where: { room } });
     if (!chat) {
       chat = new Chat();
-      chat.iduser = userId;
+      chat.userId = userId;
       chat.room = room;
       chat.messages = [];
     }
@@ -37,7 +37,7 @@ export class MessagesService {
   }
 
   async getMessagesByUser(userId: string) {
-    return await this.chatRepository.find({ where: { iduser: userId } });
+    return await this.chatRepository.find({ where: { userId: userId } });
   }
 
   async getMessagesByRoom(room: string) {

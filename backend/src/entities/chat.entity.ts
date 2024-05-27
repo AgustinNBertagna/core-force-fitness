@@ -11,7 +11,7 @@ export class Chat {
   id: string;
 
   @Column()
-  iduser: string;
+  userId: string;
 
   @Column()
   idTrainer: string;
