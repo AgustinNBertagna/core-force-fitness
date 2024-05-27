@@ -1,24 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepository } from '../users/users.repository';
-import { MembershipsService } from '../memberships/memberships.service';
-import { MercadoPagoConfig, PreApproval, PreApprovalPlan } from 'mercadopago';
-import { Membership } from 'src/entities/membership.entity';
+import { MercadoPagoConfig, PreApprovalPlan } from 'mercadopago';
+import { Membership } from '../../entities/membership.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserMemberships } from 'src/entities/userMembership.entity';
 import { Repository } from 'typeorm';
+import { PaymentsRepository } from './payments.repository';
+/* import { MembershipsService } from '../memberships/memberships.service'; */
 
 @Injectable()
 export class PaymentsService {
   constructor(
-    private readonly usersRepository: UserRepository,
-    private readonly membershipsService: MembershipsService,
+    /* private readonly membershipsService: MembershipsService, */
+    private readonly paymentsRepository: PaymentsRepository,
     @InjectRepository(UserMemberships)
     private userMemberships: Repository<UserMemberships>,
+    @InjectRepository(Membership)
+    private membershipRepository: Repository<Membership>,
   ) {}
 
   async getSubscriptionUrl(membershipId: string) {
-    const memberships: Membership[] =
-      await this.membershipsService.getMemberships();
+    /*  const memberships: Membership[] =
+      await this.membershipsService.getMemberships(); */
+
+    const memberships: Membership[] = await this.membershipRepository.find();
 
     const membership: Membership | undefined = memberships.find(
       (membership) => {
@@ -64,21 +68,20 @@ export class PaymentsService {
 
     const { preapproval_id } = userMembership;
 
-    const accessToken = process.env.MP_ACCESS_TOKEN;
+    await this.paymentsRepository.cancelSubscription(preapproval_id);
 
-    const client = new MercadoPagoConfig({
-      accessToken: accessToken as string,
-      options: { timeout: 9000 },
-    });
+    await this.userMemberships.update(
+      { id: userMembership.id },
+      { is_active: false },
+    );
 
-    const preApproval = new PreApproval(client);
-
-    await preApproval.update({
-      id: preapproval_id,
-      body: {
-        status: 'cancelled',
+    await this.userMemberships.update(
+      {
+        user: { id: userId },
+        membership: { id: '941866bb-f16c-4b6d-ab2d-7cb72a4b5802' },
       },
-    });
+      { is_active: true },
+    );
 
     return { message: 'Subscription successfully cancelled' };
   }
