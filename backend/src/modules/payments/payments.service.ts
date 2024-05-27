@@ -83,6 +83,6 @@ export class PaymentsService {
       { is_active: true },
     );
 
-    return { message: 'Subscription successfully cancelled' };
+    return { membership_Name: 'Free' };
   }
 }
