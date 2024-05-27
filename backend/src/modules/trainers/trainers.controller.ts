@@ -44,7 +44,7 @@ export class TrainersController {
     return await this.trainersService.assignStudents(id, userId);
   }
 
-  @Delete('routine')
+  @Delete('routine/:id')
   @Roles(Role.TRAINER)
   @UseGuards(AuthGuard, RolesGuard)
   async deleteRoutine(@Param('id') id: string) {
