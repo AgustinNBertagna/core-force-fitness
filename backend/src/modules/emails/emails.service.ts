@@ -1,10 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import * as fs from 'fs';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Repository } from 'typeorm';
+import { User } from 'src/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class EmailsService {
-  constructor() {}
+  constructor(
+    @InjectRepository(User) private usersRepository: Repository<User>,
+  ) {}
   private transporter: nodemailer.Transporter = nodemailer.createTransport({
     service: 'outlook',
     auth: {
@@ -26,18 +32,29 @@ export class EmailsService {
     await this.transporter.sendMail(email);
   }
 
-  async sendPricingEmail(username: string, recipient: string) {
+  @Cron(CronExpression.EVERY_WEEK)
+  async sendPricingEmail() {
+    const freeUsers = await this.usersRepository.find({
+      where: { user_membership: { membership: { name: 'Free' } } },
+      select: { name: true, email: true },
+    });
+    if (!freeUsers.length) return;
     const pricingMail = fs.readFileSync(
       'src/helpers/pricingMail.html',
       'utf-8',
     );
     const email = {
       from: process.env.MAIL_USER,
-      to: recipient,
-      subject: `Hello dear ${username}! See our full pricing list!`,
+      to: '',
+      subject: '',
       html: pricingMail,
     };
-
-    await this.transporter.sendMail(email);
+    await Promise.all(
+      freeUsers.map(async (user) => {
+        email.to = user.email;
+        email.subject = `Hello dear ${user.name}! See our full pricing list!`;
+        await this.transporter.sendMail(email);
+      }),
+    );
   }
 }

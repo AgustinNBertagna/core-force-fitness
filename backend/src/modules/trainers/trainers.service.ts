@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Routine } from 'src/entities/routines.entity';
 import { User } from 'src/entities/user.entity';
@@ -52,9 +56,25 @@ export class TrainersService {
   async deleteRoutine(id: string): Promise<string> {
     const routine: Routine | null = await this.routineRepository.findOne({
       where: { id },
+      relations: ['users_routines'],
     });
+
     if (!routine) throw new NotFoundException('Routine not found');
-    await this.routineRepository.delete(routine.id);
+
+    try {
+      if (routine.users_routines && routine.users_routines.length > 0) {
+        for (const userRoutine of routine.users_routines) {
+          await this.usersRoutinesRepository.delete(userRoutine.id);
+        }
+      }
+
+      await this.routineRepository.delete(routine.id);
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Cannot delete relations from entity',
+      );
+    }
+
     return routine.id;
   }
 
