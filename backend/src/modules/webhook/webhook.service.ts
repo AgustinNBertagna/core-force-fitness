@@ -29,6 +29,10 @@ export class WebhookService {
       id: paymentId,
     });
 
+    console.log('Payment info:', paymentInfo);
+
+    const preapprovalId = paymentInfo.metadata.preapproval_id;
+
     const email = paymentInfo.payer?.email;
 
     if (!email) throw new BadRequestException('Invalid email');
@@ -41,6 +45,10 @@ export class WebhookService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    await this.membershipService.assignMembership(user.id, membershipName);
+    await this.membershipService.assignMembership(
+      user.id,
+      membershipName,
+      preapprovalId,
+    );
   }
 }

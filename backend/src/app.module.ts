@@ -16,9 +16,11 @@ import { StripeModule } from './modules/stripe/stripe.module';
 import { WebhookModule } from './modules/webhook/webhook.module';
 import { TrainersModule } from './modules/trainers/trainers.module';
 import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrmConfig],
