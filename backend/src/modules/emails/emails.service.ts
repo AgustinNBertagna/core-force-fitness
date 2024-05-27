@@ -43,16 +43,14 @@ export class EmailsService {
       'src/helpers/pricingMail.html',
       'utf-8',
     );
-    const email = {
-      from: process.env.MAIL_USER,
-      to: '',
-      subject: '',
-      html: pricingMail,
-    };
     await Promise.all(
       freeUsers.map(async (user) => {
-        email.to = user.email;
-        email.subject = `Hello dear ${user.name}! See our full pricing list!`;
+        const email = {
+          from: process.env.MAIL_USER,
+          to: user.email,
+          subject: `Hello dear ${user.name}! See our full pricing list!`,
+          html: pricingMail,
+        };
         await this.transporter.sendMail(email);
       }),
     );
