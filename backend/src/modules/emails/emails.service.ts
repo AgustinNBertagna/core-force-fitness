@@ -55,4 +55,28 @@ export class EmailsService {
       }),
     );
   }
+
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_NOON)
+  async sendWeMissYouEmail() {
+    const nonActiveUsers = await this.usersRepository.findBy({
+      isActive: false,
+    });
+    if (!nonActiveUsers.length) return;
+    const template = fs.readFileSync(
+      'src/helpers/rememberUsEmail.html',
+      'utf-8',
+    );
+    await Promise.all(
+      nonActiveUsers.map(async (user) => {
+        const rememberUsEmail = template.replace(/nombreDeUsuario/g, user.name);
+        const email = {
+          from: process.env.MAIL_USER,
+          to: user.email,
+          subject: `It's been a while, ${user.name}.`,
+          html: rememberUsEmail,
+        };
+        await this.transporter.sendMail(email);
+      }),
+    );
+  }
 }
