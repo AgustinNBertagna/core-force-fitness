@@ -78,7 +78,7 @@ export class PaymentsService {
     await this.userMemberships.update(
       {
         user: { id: userId },
-        membership: { id: '941866bb-f16c-4b6d-ab2d-7cb72a4b5802' },
+        membership: { id: '40674db0-55f0-4621-8e65-3d6dbafc9776' },
       },
       { is_active: true },
     );
