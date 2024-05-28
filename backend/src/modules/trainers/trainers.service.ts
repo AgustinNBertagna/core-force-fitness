@@ -33,6 +33,8 @@ export class TrainersService {
       user_membership: { membership: { name: Not('Free') } },
     });
     if (!students.length) throw new NotFoundException('Students not found');
+    console.log(students);
+
     return students;
   }
 
