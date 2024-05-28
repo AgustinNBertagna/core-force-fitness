@@ -9,7 +9,6 @@ import { UpdateUserDto } from 'src/dtos/update-user.dto';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { userWithoutPasswordDto } from 'src/dtos/user-without-password.dto';
-import { Membership } from 'src/entities/membership.entity';
 import { UserMemberships } from 'src/entities/userMembership.entity';
 import { Rate } from 'src/entities/rate.entity';
 
@@ -52,7 +51,10 @@ export class UsersService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
+    // const user = await this.usersRepository.findOne({
+    //   where: { id },
+    //   relations: ['orders'],
+    // });
     return user;
   }
 
@@ -123,5 +125,12 @@ export class UsersService {
     //students
     await this.usersRepository.save(user);
     return user.id;
+  }
+
+  async findUserById(id: number): Promise<User | null> {
+    const user = await this.usersRepository.findOne({
+      where: { id: String(id) },
+    });
+    return user || null;
   }
 }

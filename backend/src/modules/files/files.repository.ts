@@ -23,4 +23,24 @@ export class FilesRepository {
       toStream(file.buffer).pipe(upload);
     });
   }
+
+  async uploadPdf(file: Express.Multer.File): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
+      const upload = v2.uploader.upload_stream(
+        { resource_type: 'raw' },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(new Error('La carga del PDF falló'));
+            }
+          }
+        },
+      );
+      toStream(file.buffer).pipe(upload);
+    });
+  }
 }

@@ -13,9 +13,14 @@ import { FirebaseModule } from './modules/firebase/firebase.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { RateModule } from './modules/rate/rate.module';
 import { StripeModule } from './modules/stripe/stripe.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
+import { TrainersModule } from './modules/trainers/trainers.module';
+import { ChatbotModule } from './modules/chatbot/chatbot.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrmConfig],
@@ -40,6 +45,10 @@ import { StripeModule } from './modules/stripe/stripe.module';
     FirebaseModule,
     PaymentsModule,
     RateModule,
+    WebhookModule,
+    TrainersModule,
+    ChatbotModule,
   ],
+  providers: [],
 })
 export class AppModule {}

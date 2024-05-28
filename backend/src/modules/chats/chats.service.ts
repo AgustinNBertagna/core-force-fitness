@@ -1,16 +1,37 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Chat } from 'src/entities/chat.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class ChatsService {
-  findAll() {
-    return `This action returns all chats`;
+export class ChatService {
+  constructor(
+    @InjectRepository(Chat)
+    private readonly chatRepository: Repository<Chat>,
+  ) {}
+
+  async saveMessage(
+    userId: string,
+    room: string,
+    message: { user: string; body: string },
+  ) {
+    let chat = await this.chatRepository.findOne({ where: { room } });
+    if (!chat) {
+      chat = new Chat();
+      chat.userId = userId;
+      chat.room = room;
+      chat.messages = [];
+    }
+
+    chat.messages.push(message);
+    return this.chatRepository.save(chat);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} chat`;
+  async getMessagesByUser(userId: string) {
+    return this.chatRepository.find({ where: { userId } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} chat`;
+  async getMessagesByRoom(room: string) {
+    return this.chatRepository.find({ where: { room } });
   }
 }

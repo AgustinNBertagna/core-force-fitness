@@ -10,7 +10,7 @@ const SizeValidator = new MaxFileSizeValidator({
 });
 
 const TypeValidator = new FileTypeValidator({
-  fileType: /(jpg|jpeg|png|webp)$/,
+  fileType: /(jpg|jpeg|png|webp|pdf)$/,
 });
 
 export const FileParser = new ParseFilePipe({

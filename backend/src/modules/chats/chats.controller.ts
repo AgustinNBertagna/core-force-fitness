@@ -1,22 +1,29 @@
-import { Controller, Get, Param, Delete } from '@nestjs/common';
-import { ChatsService } from './chats.service';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { ChatService } from './chats.service';
 
-@Controller('chats')
-export class ChatsController {
-  constructor(private readonly chatsService: ChatsService) {}
+@Controller('messages')
+export class ChatController {
+  constructor(private readonly chatService: ChatService) {}
 
-  @Get()
-  findAll() {
-    return this.chatsService.findAll();
+  @Post()
+  async saveMessage(
+    @Body('userId') userId: string,
+    @Body('room') room: string,
+    @Body('message') message: { user: string; body: string },
+  ) {
+    const chat = await this.chatService.saveMessage(userId, room, message);
+    return chat;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.chatsService.findOne(+id);
+  @Get('user/:userId')
+  async getMessagesByUser(@Param('userId') userId: string) {
+    const chats = await this.chatService.getMessagesByUser(userId);
+    return chats;
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.chatsService.remove(+id);
+  @Get('room/:room')
+  async getMessagesByRoom(@Param('room') room: string) {
+    const chats = await this.chatService.getMessagesByRoom(room);
+    return chats;
   }
 }

@@ -20,8 +20,6 @@ export class UserRepository {
   ): Promise<User[]> {
     const where: Partial<User> = {};
 
-    where.isActive = true;
-
     if (userType === Role.USER) where.role = Role.USER;
     if (userType === Role.TRAINER) where.role = Role.TRAINER;
     if (userType === Role.ADMIN) where.role = Role.ADMIN;
@@ -65,7 +63,10 @@ export class UserRepository {
   async getUserById(id: string): Promise<User | null> {
     const user: User | null = await this.usersRepository.findOne({
       where: { id, isActive: true },
-      relations: { user_membership: { membership: true } },
+      relations: {
+        user_membership: { membership: true },
+        user_routines: { routine: true },
+      },
       select: [
         'address',
         'birthdate',

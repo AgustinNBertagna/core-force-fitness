@@ -1,16 +1,46 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Chat } from 'src/entities/chat.entity';
+import { Message } from 'src/entities/message..entity';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class MessagesService {
-  findAll() {
-    return `This action returns all messages`;
+  constructor(
+    @InjectRepository(Message)
+    private readonly messagesRepository: Repository<Message>,
+    @InjectRepository(Chat)
+    private readonly chatRepository: Repository<Chat>,
+  ) {}
+
+  async createMessage(msg: string, room: string, user: User): Promise<Message> {
+    const message = this.messagesRepository.create({ msg, room, user });
+    return this.messagesRepository.save(message);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} message`;
+  async saveMessage(
+    userId: string,
+    room: string,
+    message: { user: string; body: string },
+  ) {
+    let chat = await this.chatRepository.findOne({ where: { room } });
+    if (!chat) {
+      chat = new Chat();
+      chat.userId = userId;
+      chat.room = room;
+      chat.messages = [];
+    }
+
+    chat.messages.push(message);
+    return await this.chatRepository.save(chat);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} message`;
+  async getMessagesByUser(userId: string) {
+    return await this.chatRepository.find({ where: { userId: userId } });
+  }
+
+  async getMessagesByRoom(room: string) {
+    return await this.chatRepository.find({ where: { room } });
   }
 }

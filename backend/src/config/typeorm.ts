@@ -6,6 +6,7 @@ import { DataSource, DataSourceOptions } from 'typeorm';
 dotenvConfig({ path: '.env.development' });
 
 const config = {
+  // dropSchema: true,
   type: 'postgres',
   database: process.env.DB_NAME,
   host: process.env.DB_HOST,
@@ -16,7 +17,6 @@ const config = {
   migrations: ['dist/migrations/*{.ts,.js}'],
   logging: ['error'],
   synchronize: true,
-  // dropSchema: true,
   ssl: {
     rejectUnauthorized: false, // Solo si estás trabajando localmente sin SSL
   },
