@@ -41,16 +41,28 @@ export class FirebaseService {
           role: existingUser.role,
         };
 
-        try {
+        if (existingUser.trainer) {
           const token = this.jwtService.sign(payload);
-
           return {
             message: 'User logged in successfully',
             token,
             userId: existingUser.id,
+            trainer_id: existingUser.trainer.id,
           };
-        } catch (error) {
-          throw new InternalServerErrorException('Failed to create JWT token');
+        } else {
+          try {
+            const token = this.jwtService.sign(payload);
+
+            return {
+              message: 'User logged in successfully',
+              token,
+              userId: existingUser.id,
+            };
+          } catch (error) {
+            throw new InternalServerErrorException(
+              'Failed to create JWT token',
+            );
+          }
         }
       } else {
         const newUser: User = new User();
