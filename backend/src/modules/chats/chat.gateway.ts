@@ -1,4 +1,6 @@
 import {
+  ConnectedSocket,
+  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -7,6 +9,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { ChatService } from './chats.service';
 
 @WebSocketGateway({ cors: true })
 export class ChatGateway
@@ -14,6 +17,8 @@ export class ChatGateway
 {
   @WebSocketServer()
   server: Server;
+
+  constructor(private readonly chatService: ChatService) {}
 
   afterInit(server: Server) {
     console.log('Init');
@@ -35,15 +40,17 @@ export class ChatGateway
 
   @SubscribeMessage('message')
   async handleMessage(
-    client: Socket,
-    payload: { body: string; room: string },
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { body: string; room: string },
   ): Promise<void> {
     const user = client.handshake.auth.name ?? 'anonymous';
     const { body, room } = payload;
     console.log({ user, body, room });
 
     try {
-      this.server.to(room).emit('message', { user, body });
+      const newMessage = { user, body };
+      await this.chatService.saveMessage(user, room, newMessage);
+      this.server.to(room).emit('message', newMessage);
     } catch (error) {
       console.log(error);
     }

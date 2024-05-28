@@ -10,10 +10,10 @@ export class Chat {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   userId: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: true })
   idTrainer: string;
 
   @Column()
