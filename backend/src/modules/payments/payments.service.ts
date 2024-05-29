@@ -5,12 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserMemberships } from 'src/entities/userMembership.entity';
 import { Repository } from 'typeorm';
 import { PaymentsRepository } from './payments.repository';
-/* import { MembershipsService } from '../memberships/memberships.service'; */
 
 @Injectable()
 export class PaymentsService {
   constructor(
-    /* private readonly membershipsService: MembershipsService, */
     private readonly paymentsRepository: PaymentsRepository,
     @InjectRepository(UserMemberships)
     private userMemberships: Repository<UserMemberships>,
@@ -19,11 +17,7 @@ export class PaymentsService {
   ) {}
 
   async getSubscriptionUrl(membershipId: string) {
-    /*  const memberships: Membership[] =
-      await this.membershipsService.getMemberships(); */
-
     const memberships: Membership[] = await this.membershipRepository.find();
-
     const membership: Membership | undefined = memberships.find(
       (membership) => {
         return membership.id === membershipId;
@@ -68,7 +62,8 @@ export class PaymentsService {
 
     const { preapproval_id } = userMembership;
 
-    await this.paymentsRepository.cancelSubscription(preapproval_id);
+    if (preapproval_id)
+      await this.paymentsRepository.cancelSubscription(preapproval_id);
 
     await this.userMemberships.update(
       { id: userMembership.id },
