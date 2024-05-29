@@ -97,17 +97,27 @@ export class AuthService {
       email: user.email,
       role: user.role,
     };
-
-    try {
+    console.log(user, user.trainer);
+    if (user.trainer) {
       const token = this.jwtService.sign(payload);
-
       return {
         message: 'User logged in successfully',
         token,
         userId: user.id,
+        trainer_id: user.trainer.id,
       };
-    } catch (error) {
-      throw new InternalServerErrorException('Failed to create JWT token');
+    } else {
+      try {
+        const token = this.jwtService.sign(payload);
+
+        return {
+          message: 'User logged in successfully',
+          token,
+          userId: user.id,
+        };
+      } catch (error) {
+        throw new InternalServerErrorException('Failed to create JWT token');
+      }
     }
   }
 }
