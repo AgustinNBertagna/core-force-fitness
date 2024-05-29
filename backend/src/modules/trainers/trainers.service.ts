@@ -8,7 +8,7 @@ import { Routine } from 'src/entities/routines.entity';
 import { User } from 'src/entities/user.entity';
 import { UsersRoutines } from 'src/entities/userRoutine.entity';
 import { Role } from 'src/helpers/roles.enum';
-import { Not, Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class TrainersService {
@@ -28,7 +28,7 @@ export class TrainersService {
   async getStudents() {
     const students = await this.usersRepository.findBy({
       role: Role.USER,
-      trainer: false,
+      trainer: IsNull(),
       isActive: true,
       user_membership: { membership: { name: Not('Free') } },
     });
